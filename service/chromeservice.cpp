@@ -1,7 +1,6 @@
 #include "chromeservice.h"
 #include "model/servicedata.h"
 #include <QTimer>
-#include <WebAPI.hpp>
 #include <CkHttp.h>
 #include <CkJsonObject.h>
 #include <QJsonArray>

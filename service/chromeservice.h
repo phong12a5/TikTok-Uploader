@@ -4,7 +4,6 @@
 #include <QObject>
 #include "baseservice.h"
 #include <model/servicedata.h>
-//#include "worker/chromeworker.h"
 
 class ServiceData;
 class AFAction;
