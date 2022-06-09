@@ -215,7 +215,7 @@ void ChromeService::initChromeDriver()
 
     args.push_back("--no-sandbox");
     args.push_back("--start-maximized");
-    args.push_back("--start-fullscreen");
+//    args.push_back("--start-fullscreen");
     args.push_back("--single-process");
     args.push_back("--disable-dev-shm-usage");
 //    args.push_back("--incognito");
@@ -241,13 +241,13 @@ void ChromeService::initChromeDriver()
 
 
     webdriverxx::JsonObject sourceJson = webdriverxx::JsonObject();
-    sourceJson.Set("intl.accept_languages", "en,en_US");
-    sourceJson.Set("profile.password_manager_enabled", false);
-    sourceJson.Set("credentials_enable_service", false);
+//    sourceJson.Set("intl.accept_languages", "en,en_US");
+//    sourceJson.Set("profile.password_manager_enabled", false);
+//    sourceJson.Set("credentials_enable_service", false);
     chromeOptions.SetPrefs(sourceJson);
 
     chromeOptions.SetBinary("/usr/bin/google-chrome");
-    LOGD << "Ahuhu";
+    LOGD << "Ahihi";
 
 #if 0
     webdriverxx::chrome::MobileEmulation mobileEmulation;
