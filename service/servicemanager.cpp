@@ -1,5 +1,6 @@
 #include "servicemanager.h"
 #include <QMutex>
+#include "baseservice.h"
 
 ServiceManager* ServiceManager::sInstance = nullptr;
 

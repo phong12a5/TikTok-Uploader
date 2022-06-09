@@ -5,8 +5,8 @@ import QtQuick.Controls 2.12
 Window {
     id: root
     visible: true
-    width: 640
-    height: 480
+    width: 400
+    height: 400
     title: qsTr("Subscribe Tool")
 
     Item {
@@ -14,7 +14,7 @@ Window {
         width: root.width/2
         height: 50
         anchors.horizontalCenter: startBtn.horizontalCenter
-        anchors.bottom: tokenConfig.top
+        anchors.bottom: threadConfig.top
         Text {
             id: deviceLabel
             anchors.verticalCenter: parent.verticalCenter
@@ -31,41 +31,10 @@ Window {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
-            text: AppModel.deviceName + " (" + AppModel.deviceStatus + ")"
+            text: AppModel.deviceName
             font.pixelSize: 15
         }
     }
-
-    Item {
-        id: tokenConfig
-        width: root.width/2
-        height: 50
-        anchors.horizontalCenter: startBtn.horizontalCenter
-        anchors.bottom: threadConfig.top
-        Text {
-            id: tokenLabel
-            anchors.verticalCenter: parent.verticalCenter
-            width: contentWidth
-            height: 50
-            verticalAlignment: Text.AlignVCenter
-            text: qsTr("Token: ")
-            font.pixelSize: 15
-        }
-
-        TextField {
-            height: 30
-            anchors.left : tokenLabel.right
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            verticalAlignment: Text.AlignVCenter
-            text: AppModel.token
-            font.pixelSize: 15
-            onTextChanged: {
-                AppModel.token = text
-            }
-        }
-    }
-
 
     Item {
         id: threadConfig

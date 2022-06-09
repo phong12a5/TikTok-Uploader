@@ -20,7 +20,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 SOURCES += \
         appmodel.cpp \
-        log.cpp \
         main.cpp \
         appmain.cpp \
         model/afaction.cpp \
@@ -54,9 +53,10 @@ LIBS += -L$$PWD/chilkat/lib -lchilkat-9.5.0 -lcurl
 
 
 #copy chromedriver.exe to output folder
-#!exists( $$OUT_PWD/chromedriver.exe) {
-#    QMAKE_POST_LINK += copy /y "$$shell_path($$PWD/chromedriver.exe)" "$$shell_path($$OUT_PWD)"
-#}
+!exists( $$OUT_PWD/chromedriver) {
+    message("copy chromedriver")
+    QMAKE_POST_LINK += $$quote(cp $$PWD/chromedriver $$OUT_PWD)
+}
 
 RC_ICONS = Logo.ico
 

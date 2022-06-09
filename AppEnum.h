@@ -8,6 +8,11 @@ class AppEnum {
 
 public:
 
+    enum SERVICE_TYPE: int {
+      TYPE_CHROME_SERVICE = 0,
+      TYPE_FIREFOX_SERVICE
+    };
+
     enum E_PROXY_TYPE: int {
         E_HTTP_PROXY = 0,
         E_SOCKS5_PROXY

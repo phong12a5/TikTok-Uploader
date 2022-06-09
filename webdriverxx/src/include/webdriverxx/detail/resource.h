@@ -7,6 +7,7 @@
 #include "../conversions.h"
 #include "../response_status_code.h"
 #include "../picojson.h"
+#include <QDebug>
 
 namespace webdriverxx {
 namespace detail {
@@ -148,6 +149,9 @@ private:
 		HttpResponse (IHttpClient::* member)(const std::string& url, const std::string& upload_data) const,
 		const char* request_type
 		) const {
+#if 0
+                qDebug() << "data: " << ToUploadData(upload_data).c_str();
+#endif
 		WEBDRIVERXX_FUNCTION_CONTEXT_BEGIN()
 		return ProcessResponse((http_client_->*member)(
 			ConcatUrl(url_, command),

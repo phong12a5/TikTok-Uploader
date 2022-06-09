@@ -27,7 +27,6 @@ private:
 
 public slots:
     void onStarted();
-    void onChecking();
 
 private:
     QThread* m_subThread;

@@ -3,6 +3,7 @@
 #include "detail/error_handling.h"
 #include "detail/types.h"
 #include <algorithm>
+#include <QDebug>
 
 namespace webdriverxx {
 
@@ -46,21 +47,24 @@ Session Client::CreateSession(
 	const Capabilities& required
 	) const {
 	WEBDRIVERXX_FUNCTION_CONTEXT_BEGIN()
-
+#if 0
 	picojson::array capabilities;
 	capabilities.push_back(picojson::value(desired));
 
 	picojson::object firstMatch;
 	firstMatch.insert(std::make_pair("firstMatch", picojson::value(capabilities)));
+#endif
 
 	const auto response = resource_->Post("session",
 		JsonObject()
 			//.Set("desiredCapabilities", firstMatch) // don't set this, for some reason it will fuck up.
-			.Set("desiredCapabilities", firstMatch)
-			.Set("requiredCapabilities", firstMatch)
+                          .Set("desiredCapabilities", static_cast<picojson::value>(desired))
+                          .Set("requiredCapabilities", static_cast<picojson::value>(required))
 		);
-
-	const auto sessionId = response.get("value").get("sessionId");
+#if 0
+        qDebug() << "response: " << response.serialize().c_str();
+#endif
+        const auto sessionId = response.get("sessionId");
 
 	WEBDRIVERXX_CHECK(sessionId.is<std::string>(),                  "Session ID is not a string");
 	WEBDRIVERXX_CHECK(response.get("value").is<picojson::object>(), "Capabilities is not an object");

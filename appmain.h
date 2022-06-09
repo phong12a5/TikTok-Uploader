@@ -20,18 +20,13 @@ public:
     Q_INVOKABLE bool start();
     Q_INVOKABLE bool stop();
 
-private:
-    void setWindowProp(ServiceData* model, int index);
-
 public slots:
-    void onCheckPrecondition();
     void onServiceUpdated();
-    void onConfigChanged();
 
 private:
     static AppMain* m_instance;
-    QProcess* m_chromeDriverProcess = nullptr;
-    QTimer* m_preconditionChecker;
+
+    QProcess* m_chromeDriverProcess;
 };
 
 #endif // APPMAIN_H

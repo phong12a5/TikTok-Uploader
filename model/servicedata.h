@@ -4,13 +4,10 @@
 #include <QObject>
 #include "cloneinfo.h"
 #include "log.h"
-#include "fdriver/include/util/futil.h"
 #include <array>
 #include <array>
-#include <windows.h>
 #include "AppEnum.h"
 #include "cloneinfo.h"
-#include <service/baseservice.h>
 #include <AppDefine.h>
 #include <QSize>
 #include <QPoint>
@@ -62,7 +59,7 @@ public:
         ACCTION_FRIEND_BUTTON
     };
 
-    explicit ServiceData(BaseService::SERVICE_TYPE type, int profileId, QObject* parent = nullptr);
+    explicit ServiceData(AppEnum::SERVICE_TYPE type, int profileId, QObject* parent = nullptr);
     ~ServiceData();
 
     QString profilePath() { return m_profilePath; }
@@ -125,7 +122,7 @@ private slots:
     void onCloneInfoChanged(QString action = "");
 
 private:
-    BaseService::SERVICE_TYPE m_type;
+    AppEnum::SERVICE_TYPE m_type;
     QString m_type_str;
     int m_profileId;
     QString m_profileFolderPath;

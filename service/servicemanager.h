@@ -2,8 +2,9 @@
 #define SERVICEMANAGER_H
 
 #include <QObject>
-#include "baseservice.h"
-//#include "controllermainthread.h"
+#include <log.h>
+
+class BaseService;
 
 class ServiceManager : public QObject
 {
@@ -23,8 +24,8 @@ public:
         T* service = new T(profileId);
         LOGD << " : " << service;
         m_listService.append(service);
-        connect(service, &BaseService::started, this,&ServiceManager::onServiceStarted);
-        connect(service, &BaseService::finished, this,&ServiceManager::onServiceFinished);
+        connect(service, SIGNAL(started(BaseService *)), this,SLOT(onServiceStarted(BaseService *)));
+        connect(service, SIGNAL(finished(BaseService *)), this,SLOT(onServiceFinished(BaseService *)));
         return service;
     }
 

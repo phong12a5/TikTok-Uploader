@@ -112,13 +112,13 @@ struct Chrome : Capabilities { // copyable
 	Chrome(const Capabilities& defaults = Capabilities())
 		: Capabilities(defaults) {
 		SetBrowserName(browser::Chrome);
-		SetVersion("90.0.4430.72");   // 加上这句就可以，BrowserName不能为空
+                SetVersion(defaults.GetVersion());   // 加上这句就可以，BrowserName不能为空
 		SetPlatform(platform::Linux);
 	}
 
 	// See https://sites.google.com/a/chromium.org/chromedriver/capabilities for details
 	WEBDRIVERXX_PROPERTIES_BEGIN(Chrome)
-	WEBDRIVERXX_PROPERTY(ChromeOptions,             "goog:chromeOptions",                  ChromeOptions)
+        WEBDRIVERXX_PROPERTY(ChromeOptions,             "chromeOptions",                  ChromeOptions)
 	WEBDRIVERXX_PROPERTY(PerfLoggingPrefs,          "goog:perfLoggingPrefs",               chrome::PerfLoggingPrefs)
 	WEBDRIVERXX_PROPERTIES_END()
 };

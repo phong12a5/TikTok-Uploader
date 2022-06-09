@@ -11,11 +11,10 @@
 #include <QList>
 #include "log.h"
 #include <QSettings>
-#include <WebAPI.hpp>
 #include "afaction.h"
 #include <QRandomGenerator>
 
-ServiceData::ServiceData(BaseService::SERVICE_TYPE type, int profileId, QObject *parent) :
+ServiceData::ServiceData(AppEnum::SERVICE_TYPE type, int profileId, QObject *parent) :
     QObject(parent),
     m_type(type),
     m_profileId(profileId),
@@ -25,10 +24,10 @@ ServiceData::ServiceData(BaseService::SERVICE_TYPE type, int profileId, QObject 
 {
     QSettings settings;
     switch (m_type) {
-    case BaseService::SERVICE_TYPE::TYPE_CHROME_SERVICE:
+    case AppEnum::TYPE_CHROME_SERVICE:
         m_type_str = "chrome";
         break;
-    case BaseService::SERVICE_TYPE::TYPE_FIREFOX_SERVICE:
+    case AppEnum::TYPE_FIREFOX_SERVICE:
         m_type_str = "firefox";
         break;
     default:
@@ -147,10 +146,10 @@ void ServiceData::onCloneInfoChanged(QString action)
 {
     LOGD << action;
     if(action != "" && m_cloneInfo != nullptr) {
-        WebAPI::getInstance()->updateClone(nullptr,
-                                           action.toUtf8().data(),
-                                           m_cloneInfo->appname().toUtf8().data(),
-                                           m_cloneInfo->toString().toUtf8().data());
+//        WebAPI::getInstance()->updateClone(nullptr,
+//                                           action.toUtf8().data(),
+//                                           m_cloneInfo->appname().toUtf8().data(),
+//                                           m_cloneInfo->toString().toUtf8().data());
     }
 
     QSettings settings;

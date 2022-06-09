@@ -7,9 +7,10 @@
 #include <CkGlobal.h>
 #include "log.h"
 
+/*
 #include "webdriverxx.h"
 
-using namespace webdriverxx;
+using namespace webdriverx*/;
 
 static CkGlobal glob;
 bool unlockChilkat();
@@ -17,6 +18,9 @@ bool unlockChilkat();
 int main(int argc, char *argv[])
 {
     if(!unlockChilkat()) return 1;
+
+    QProcess::execute("pkill -9 -f chromedriver");
+    QProcess::execute("pkill -9 -f chrome");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
