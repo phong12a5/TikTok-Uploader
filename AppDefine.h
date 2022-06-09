@@ -17,7 +17,7 @@
 
 #define MAX_PROFILE_NUMBER          1
 
-#define MAX_SCREEN_LOOP 5
+#define MAX_SCREEN_LOOP 100
 
 #define MAX_THREAD_FIELD            "config/max_thread"
 #define TOKEN_FIELD                 "config/token"
