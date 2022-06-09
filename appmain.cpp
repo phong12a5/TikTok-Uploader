@@ -7,7 +7,7 @@
 #include <service/apiservices.h>
 #include <AppDefine.h>
 #include <model/servicedata.h>
-
+#include <QSettings>
 
 AppMain* AppMain::m_instance = NULL;
 
@@ -15,9 +15,9 @@ AppMain::AppMain(QObject *parent) :
     QObject(parent),
     m_chromeDriverProcess(nullptr)
 {
-    QCoreApplication::setOrganizationName("AutoFarmer");
-    QCoreApplication::setOrganizationDomain("autofarmer.net");
-    QCoreApplication::setApplicationName("Subscribe Tool");
+    QCoreApplication::setOrganizationName("PDT");
+    QCoreApplication::setOrganizationDomain("dangbaphong.com");
+    QCoreApplication::setApplicationName("Tiktok-Uploader");
 
     connect(ServiceManager::instance(), &ServiceManager::serviceUpdated, this, &AppMain::onServiceUpdated);
     APIServices::instance()->startService();

@@ -4,7 +4,7 @@
 #include "AppDefine.h"
 #include <QApplication>
 #include <QScreen>
-
+#include <QSettings>
 AppModel* AppModel::sInstance = nullptr;
 
 AppModel *AppModel::instance()
@@ -22,7 +22,7 @@ AppModel::AppModel() :
     if(settings.contains(MAX_THREAD_FIELD))
         m_maxThread = settings.value(MAX_THREAD_FIELD).toInt();
     else
-        m_maxThread = 2;
+        m_maxThread = 1;
 }
 
 
