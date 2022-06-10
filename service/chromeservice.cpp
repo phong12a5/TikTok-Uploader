@@ -513,7 +513,7 @@ void ChromeService::uploadNewVideo() {
             static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com/upload?lang=en");
 
 
-            for(int i = 0; i < 20; i++) {
+            for(int i = 0; i < 30; i++) {
                 if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(., 'Upload video')]"))) {
                    std::vector<Element> iframes = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByTag("iframe"));
                    if(iframes.size()) {
@@ -526,22 +526,22 @@ void ChromeService::uploadNewVideo() {
                        if(element.GetAttribute("aria-checked") == "false")
                             element.Click();
                        else {
-                           // Step2: input file
-                           if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//input[@type='file']"))) {
-                              element.SendKeys(local_path.toStdString());
-                              delay(15000);
+
+                           // Step2: input caption
+                           if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[@data-text='true']"))) {
+                              if(element.GetText().empty()) {
+                                  QString caption = getCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending .";
+                                  element.SendKeys(caption.toStdString());
+                              } else {
+                                  // Step3: input file
+                                  if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//input[@type='file']"))) {
+                                     element.SendKeys(local_path.toStdString());
+                                     delay(15000);
+                                  }
+                              }
                            }
 
-                           // Step3: input caption
-                           if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//span[@data-text='true']"))) {
-                              QString caption = getCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending .";
-                              element.Clear();
-                              element.SendKeys(caption.toStdString());
-                           } else {
-                               LOGD << "input caption failed";
-                           }
-
-                           // Step 4: Waiting for no issues
+//                           // Step 4: Waiting for no issues
                            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[contains(text(), 'No issues detected.')]"))) {
 
                                // Step 5: click post
