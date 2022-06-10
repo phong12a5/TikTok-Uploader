@@ -534,7 +534,7 @@ void ChromeService::uploadNewVideo() {
 
                            // Step3: input caption
                            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//span[@data-text='true']"))) {
-                              QString caption = getCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending ";
+                              QString caption = getCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending .";
                               element.Clear();
                               element.SendKeys(caption.toStdString());
                            } else {
