@@ -29,6 +29,8 @@
 #include <webdriverxx.h>
 #include <QDateTime>
 #include <api/dropboxapi.h>
+#include <QRandomGenerator64>
+#include <QRandomGenerator>
 
 using namespace webdriverxx;
 
@@ -50,6 +52,42 @@ QString getRandomUserAgent()
     srand(time(NULL));
     int res = rand() % leng;
     return listUserAgen.at(res).toString();
+}
+
+QString getCaption() {
+  QStringList captionList =   QStringList()
+          << "Hi everyone!"
+          << "Are you ready ...?"
+          << "Love you <3"
+          << "Boom boom..."
+          << "Good morning!"
+          << "Good afternoon~"
+          << "Yeah yeah."
+          << "Being happy :))"
+          << "So sad ..."
+          << "Tell me something .."
+          << "Say something???"
+          << "Say oh yeah :v"
+          << "It's ok????"
+          << "Good?"
+          << "Let me see your feeling? :)))))))))))"
+          << "Don't leave me :(("
+          << "Love me????"
+          << "Just look in my eyes? :D"
+          << "Wowwwwwwwwwwwwwww ...."
+          << "Oh my god"
+          << "Beautiful girl?"
+          << "Cute or something????"
+          << "Don't leave me alone..."
+          << "Feeling sad ..."
+          << "So deep :)))))"
+          << "Yessss .... again... yes..."
+          << "Why? tell me why?..."
+          << "Tried my best~"
+          << "Don't let me say bad words ..."
+          << "Broken heart ... :((";
+
+  return captionList.at(QRandomGenerator::global()->bounded(captionList.length()));
 }
 
 bool inputText(webdriverxx::WebDriver* driver, QString textInput,const webdriverxx::By& by)
@@ -336,50 +374,6 @@ void ChromeService::getClone()
 void ChromeService::login()
 {
     LOGD;
-//    try {
-//        QString uid = serviceData()->cloneInfo()->uid();
-//        QString password = serviceData()->cloneInfo()->password();
-
-//        Element element;
-//        if(FindElement(element, ByXPath("//*[contains(@data-sigil, 'm_login_email')]")) && uid != QString(element.GetAttribute("value").c_str())) {
-//             inputText(serviceData()->cloneInfo()->uid(),ByXPath("//*[contains(@data-sigil, 'm_login_email')]"));
-//             delay(random(500, 1000));
-//        }
-
-//        if(FindElement(element, ByXPath("//*[contains(@data-sigil, 'm_login_email')]")) &&
-//                       password != QString(element.GetAttribute("value").c_str())) {
-//            inputText(serviceData()->cloneInfo()->password(),ByXPath("//*[contains(@data-sigil, 'password-plain-text-toggle-input')]"));
-//            delay(random(500, 1000));
-//        }
-
-//        if(ElementExist(ByXPath("//*[contains(@data-sigil, 'touchable login_button_block m_login_button')]"))) {
-//            click(ByXPath("//*[contains(@data-sigil, 'touchable login_button_block m_login_button')]"));
-//            delay(5000);
-//        }
-
-//        if(ElementExist(ById("approvals_code"))) {
-//            QString secretkey = serviceData()->cloneInfo()->secretkey();
-//            if(secretkey.isEmpty()) {
-//                serviceData()->cloneInfo()->setAliveStatus(CLONE_ALIVE_STATUS_CHECKPOINT);
-//                m_drive->DeleteCookies();
-//                finish();
-//                return;
-//            } else {
-//                delay(random(1000, 2000));
-//                inputText(WebAPI::getInstance()->tOTP(secretkey.toUtf8().data()).c_str()\
-//                      ,ById("approvals_code"));
-//                delay(random(500,1000));
-//                click(ById("checkpointSubmitButton-actual-button"));
-//            }
-//        }
-
-//        if(ElementExist(ById("login_error"))) {
-//            m_drive->DeleteCookies();
-//            finish();
-//        }
-//    } catch(...) {
-//        LOGD << "m_login_email not found";
-//    }
 }
 
 bool ChromeService::checkProxy(PROXY proxy)
@@ -445,12 +439,12 @@ void ChromeService::onMainProcess()
                 LOGD << AppEnum::scrIdStr(screen_id);
                 switch (screen_id) {
                 case AppEnum::E_SCREEN_HOME: {
-//                    feed();
+                    feed();
                     long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
                     qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
-//                    if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
+                    if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
                         uploadNewVideo();
-//                    }
+                    }
                     finish();
                 }
                     break;
@@ -535,13 +529,22 @@ void ChromeService::uploadNewVideo() {
                            // Step2: input file
                            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//input[@type='file']"))) {
                               element.SendKeys(local_path.toStdString());
-                              delay(10000);
+                              delay(15000);
                            }
 
-                           // Step 3: Waiting for no issues
+                           // Step3: input caption
+                           if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//span[@data-text='true']"))) {
+                              QString caption = getCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending ";
+                              element.Clear();
+                              element.SendKeys(caption.toStdString());
+                           } else {
+                               LOGD << "input caption failed";
+                           }
+
+                           // Step 4: Waiting for no issues
                            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[contains(text(), 'No issues detected.')]"))) {
 
-                               // Step 4: click post
+                               // Step 5: click post
                               if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[contains(@class, 'btn-post')]"))) {
                                  try {
                                      element = element.FindElement(ByTag("button"));
