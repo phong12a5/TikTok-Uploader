@@ -6,7 +6,7 @@
 #include <appmodel.h>
 #include <CkGlobal.h>
 #include "log.h"
-
+#include <api/dbpapi.h>
 /*
 #include "webdriverxx.h"
 
