@@ -27,6 +27,8 @@
 #include <QNetworkRequest>
 #include <api/dbpapi.h>
 #include <webdriverxx.h>
+#include <QDateTime>
+#include <api/dropboxapi.h>
 
 using namespace webdriverxx;
 
@@ -243,6 +245,7 @@ void ChromeService::initChromeDriver()
 //    sourceJson.Set("intl.accept_languages", "en,en_US");
     sourceJson.Set("profile.password_manager_enabled", false);
     sourceJson.Set("credentials_enable_service", false);
+    sourceJson.Set("exit_type", "Normal");
     chromeOptions.SetPrefs(sourceJson);
 
     chromeOptions.SetBinary("/usr/bin/google-chrome");
@@ -405,21 +408,9 @@ bool ChromeService::checkProxy(PROXY proxy)
 
 int ChromeService::detectScreen()
 {
-    QString url = static_cast<webdriverxx::WebDriver*>(m_drive)->GetUrl().c_str();
-    if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@data-sigil, 'm_login_email')]"))) {
-        return AppEnum::E_SCREEN_LOGIN;
-    } else if( ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ById("approvals_code"))) {
-        return AppEnum::E_SCREEN_ENTER_LOGIN_CODE;
-    } else if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@value, 'save_device')]")) &&
-              ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@value, 'dont_save')]"))) {
-       return AppEnum::E_SCREEN_SAVE_BROWSER;
-    } else if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@href, '/a/nux/wizard/nav.php?step=homescreen_shortcut&skip')]"))) {
-        return AppEnum::E_SCREEN_CREATE_SHORTCUT;
-    } else if(url.contains("%2Fcheckpoint%2F") ||
-              url.contains("282/")) {
-        return AppEnum::E_SCREEN_CHECKPOINT;
-    } else if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ById("m_news_feed_stream"))||
-                ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@href, '/profile.php?refid=')]"))) {
+    QString url = static_cast<webdriverxx::WebDriver*>(m_drive)->GetUrl().c_str(); //nav-following
+    if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@data-e2e, 'nav-foryou')]")) &&
+                ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(@data-e2e, 'nav-following')]"))) {
        return AppEnum::E_SCREEN_HOME;
     } else {
         return AppEnum::E_SCREEN_UNKNOWN;
@@ -453,6 +444,15 @@ void ChromeService::onMainProcess()
                 m_screen_stack.append(screen_id);
                 LOGD << AppEnum::scrIdStr(screen_id);
                 switch (screen_id) {
+                case AppEnum::E_SCREEN_HOME: {
+//                    feed();
+                    long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
+                    qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
+                    if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
+                        uploadNewVideo();
+                    }
+                }
+                    break;
                 default:
                     break;
                 }
@@ -470,5 +470,72 @@ void ChromeService::onMainProcess()
         }
     } catch(...) {
         handle_eptr(std::current_exception());
+    }
+}
+
+void ChromeService::feed() {
+    int operations = QRandomGenerator::global()->bounded(10) + 5;
+    for(int i = 0 ; i <operations; i++) {
+        Element element;
+        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("/html"))) {
+            element.SendKeys(Shortcut() << keys::PageDown);
+            delay(1000);
+        }
+
+#if 0
+        if(QRandomGenerator::global()->bounded(4) == 1) {
+            try {
+                std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//*[contains(@data-sigil, 'touchable ufi-inline-like like-reaction-flyout')]"));
+                foreach(Element element , elements) {
+                    if(element.IsDisplayed() && element.GetAttribute("aria-pressed") == "false") {
+                        element.Click();
+                        delay(2);
+                        break;
+                    }
+                }
+            } catch(...) {
+                handle_eptr(std::current_exception());
+            }
+        }
+#endif
+
+        delayRandom(500, 2000);
+    }
+}
+
+void ChromeService::uploadNewVideo() {
+
+
+    QJsonObject retval = DBPApi::instance()->getVideoPath(serviceData()->cloneInfo()->clonedFrome());
+    LOGD << retval;
+    if(retval["success"].toBool()) {
+        QJsonObject video_info = retval["video_info"].toObject();
+        QString video_id = video_info["video_id"].toString();
+        QString video_path = video_info["video_path"].toString();
+        LOGD << video_id << "|" << video_path;
+        QString local_path = QString(QDir::currentPath() + "/video.mp4").toUtf8();
+        if(DropboxAPI::instance()->downloadFile(video_path.toUtf8().data(), local_path.toUtf8().data())) {
+            static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com/upload?lang=en");
+
+
+            for(int i = 0; i < 20; i++) {
+                if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(., 'Upload video')]"))) {
+                   std::vector<Element> iframes = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByTag("iframe"));
+                   LOGD << "iframes: " << iframes.size();
+                   if(iframes.size()) {
+                       static_cast<webdriverxx::WebDriver*>(m_drive)->SetFocusToFrame(iframes[0]);
+                        LOGD << static_cast<webdriverxx::WebDriver*>(m_drive)->GetPageSource().c_str();
+                   }
+                }
+
+                webdriverxx::Element element;
+                if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//input[@type='file']"))) {
+                   element.SendKeys(local_path.toStdString());
+                   LOGD << "send file";
+                }
+
+                delayRandom(1000, 2000);
+            }
+        }
     }
 }

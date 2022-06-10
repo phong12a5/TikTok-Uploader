@@ -38,7 +38,7 @@ public:
     QString status();
     void setStatus(QString status);
 
-    int lastUploadTime();
+    qint64 lastUploadTime();
 
     QString clonedFrome();
 

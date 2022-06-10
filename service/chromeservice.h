@@ -25,7 +25,8 @@ private:
     void getActions();
 
     void login();
-    void feedLike(bool acceptLike);
+    void feed();
+    void uploadNewVideo();
     bool followByPage(QString pageId, AFAction* action);
     bool getPagesOfUid();
     bool getFb_dtsg();

@@ -20,6 +20,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 SOURCES += \
         api/dbpapi.cpp \
+        api/dropboxapi.cpp \
         appmodel.cpp \
         main.cpp \
         appmain.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     AppEnum.h \
     DefineString.h \
     api/dbpapi.h \
+    api/dropboxapi.h \
     appmain.h \
     appmodel.h \
     log.h \

@@ -150,7 +150,7 @@ void ServiceData::onCloneInfoChanged()
     if(m_cloneInfo && m_cloneInfo->status() == CLONE_ALIVE_STATUS_STORE) {
         LOGD << "Save clone info: " << m_cloneInfo->username();
         settings.setValue(cloneInfokey(), m_cloneInfo->toJson());
-        DBPApi::instance()->updateClone(m_cloneInfo->username(), m_cloneInfo->toString());
+        DBPApi::instance()->updateClone(m_cloneInfo->toString());
     } else {
         settings.setValue(cloneInfokey(), QJsonObject());
         LOGD << "Save clone info: NULL";

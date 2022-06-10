@@ -37,10 +37,10 @@ void CloneInfo::setEmail(QString email)
     }
 }
 
-int CloneInfo::lastUploadTime()
+qint64 CloneInfo::lastUploadTime()
 {
     QString timestamp = m_cloneInfo.value(CLONE_INFO_FIELD_LAST_UPLOAD_TIME).toString();
-    return timestamp.toInt();
+    return timestamp.toLongLong();
 }
 
 QString CloneInfo::clonedFrome()

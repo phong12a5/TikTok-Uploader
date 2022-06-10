@@ -35,7 +35,7 @@ QJsonObject DBPApi::getCloneInfo(QString username)
     return response;
 }
 
-QJsonObject DBPApi::updateClone(QString username, QString cloneInfoPath)
+QJsonObject DBPApi::updateClone(QString cloneInfoPath)
 {
     QJsonObject body, response;
     body["api"] = "update_clone_info";
@@ -44,11 +44,11 @@ QJsonObject DBPApi::updateClone(QString username, QString cloneInfoPath)
     return response;
 }
 
-QJsonObject DBPApi::getVideoPath(QString username)
+QJsonObject DBPApi::getVideoPath(QString author)
 {
     QJsonObject body, response;
-    body["api"] = "get_video_apth";
-    body["username"] = username;
+    body["api"] = "get_video_path";
+    body["author"] = author;
     sendRequest ("https://dangbaphong.com/api/tiktok/mm-tiktok-api.php", body, response);
     return response;
 }
