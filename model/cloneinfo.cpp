@@ -46,7 +46,7 @@ qint64 CloneInfo::lastUploadTime()
 void CloneInfo::setLastUploadTime(qint64 time)
 {
     if(this->lastUploadTime() != time) {
-        m_cloneInfo[CLONE_INFO_FIELD_LAST_UPLOAD_TIME] = time;
+        m_cloneInfo[CLONE_INFO_FIELD_LAST_UPLOAD_TIME] = QString::number(time);
         emit cloneInfoChanged();
     }
 }

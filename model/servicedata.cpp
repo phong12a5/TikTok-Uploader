@@ -140,7 +140,7 @@ void ServiceData::loadCloneInfo()
         LOGD << "NULL";
     } else {
         setCloneInfo(new CloneInfo(cloneInfo));
-        LOGD << QString("%1|%2").arg(m_cloneInfo->username(), m_cloneInfo->password());;
+        LOGD << m_cloneInfo->toString();
     }
 }
 

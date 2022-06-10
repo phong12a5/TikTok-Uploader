@@ -502,7 +502,6 @@ void ChromeService::uploadNewVideo() {
 
 
     QJsonObject retval = DBPApi::instance()->getVideoPath(serviceData()->cloneInfo()->clonedFrome());
-    LOGD << retval;
     if(retval["success"].toBool()) {
         QJsonObject video_info = retval["video_info"].toObject();
         QString video_id = video_info["video_id"].toString();
