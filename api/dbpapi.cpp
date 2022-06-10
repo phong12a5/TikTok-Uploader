@@ -53,6 +53,16 @@ QJsonObject DBPApi::getVideoPath(QString author)
     return response;
 }
 
+QJsonObject DBPApi::updateVideoStatus(QString video_id, QString status)
+{
+    QJsonObject body, response;
+    body["api"] = "update_video_status";
+    body["video_id"] = video_id;
+    body["status"] = status;
+    sendRequest ("https://dangbaphong.com/api/tiktok/mm-tiktok-api.php", body, response);
+    return response;
+}
+
 bool DBPApi::sendRequest(QString url, QJsonObject& body, QJsonObject& response)
 {
     CkHttp http;

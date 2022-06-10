@@ -43,6 +43,14 @@ qint64 CloneInfo::lastUploadTime()
     return timestamp.toLongLong();
 }
 
+void CloneInfo::setLastUploadTime(qint64 time)
+{
+    if(this->lastUploadTime() != time) {
+        m_cloneInfo[CLONE_INFO_FIELD_LAST_UPLOAD_TIME] = time;
+        emit cloneInfoChanged();
+    }
+}
+
 QString CloneInfo::clonedFrome()
 {
     return m_cloneInfo.value(CLONE_INFO_FIELD_CLONED_FROM).toString();

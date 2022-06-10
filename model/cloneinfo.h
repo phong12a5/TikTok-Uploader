@@ -39,6 +39,7 @@ public:
     void setStatus(QString status);
 
     qint64 lastUploadTime();
+    void setLastUploadTime(qint64);
 
     QString clonedFrome();
 

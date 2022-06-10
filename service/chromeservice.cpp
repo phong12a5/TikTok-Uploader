@@ -448,9 +448,10 @@ void ChromeService::onMainProcess()
 //                    feed();
                     long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
                     qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
-                    if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
+//                    if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
                         uploadNewVideo();
-                    }
+//                    }
+                    finish();
                 }
                     break;
                 default:
@@ -521,17 +522,44 @@ void ChromeService::uploadNewVideo() {
             for(int i = 0; i < 20; i++) {
                 if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[contains(., 'Upload video')]"))) {
                    std::vector<Element> iframes = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByTag("iframe"));
-                   LOGD << "iframes: " << iframes.size();
                    if(iframes.size()) {
                        static_cast<webdriverxx::WebDriver*>(m_drive)->SetFocusToFrame(iframes[0]);
-                        LOGD << static_cast<webdriverxx::WebDriver*>(m_drive)->GetPageSource().c_str();
                    }
-                }
 
-                webdriverxx::Element element;
-                if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//input[@type='file']"))) {
-                   element.SendKeys(local_path.toStdString());
-                   LOGD << "send file";
+                   webdriverxx::Element element;
+                   //Step1: Turn on copyright checker first
+                   if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByClass("tiktok-switch"))) {
+                       if(element.GetAttribute("aria-checked") == "false")
+                            element.Click();
+                       else {
+                           // Step2: input file
+                           if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//input[@type='file']"))) {
+                              element.SendKeys(local_path.toStdString());
+                              delay(10000);
+                           }
+
+                           // Step 3: Waiting for no issues
+                           if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[contains(text(), 'No issues detected.')]"))) {
+
+                               // Step 4: click post
+                              if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[contains(@class, 'btn-post')]"))) {
+                                 try {
+                                     element = element.FindElement(ByTag("button"));
+                                     element.Click();
+                                 } catch(...) {}
+                              }
+                            }
+                       }
+                   }
+
+                  // Step 5: submit when video is uploaded
+                  if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[contains(text(), 'Your video is being uploaded to TikTok!')]"))) {
+                     LOGD << "Upload success!";
+                     DBPApi::instance()->updateVideoStatus(video_id, "used");
+                     qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
+                     serviceData()->cloneInfo()->setLastUploadTime(currentTime);
+                     break;
+                  }
                 }
 
                 delayRandom(1000, 2000);
