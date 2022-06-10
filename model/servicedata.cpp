@@ -13,6 +13,7 @@
 #include <QSettings>
 #include "afaction.h"
 #include <QRandomGenerator>
+#include <api/dbpapi.h>
 
 ServiceData::ServiceData(AppEnum::SERVICE_TYPE type, int profileId, QObject *parent) :
     QObject(parent),
@@ -145,11 +146,11 @@ void ServiceData::loadCloneInfo()
 
 void ServiceData::onCloneInfoChanged()
 {
-    LOGD;
     QSettings settings;
     if(m_cloneInfo && m_cloneInfo->status() == CLONE_ALIVE_STATUS_STORE) {
         LOGD << "Save clone info: " << m_cloneInfo->username();
         settings.setValue(cloneInfokey(), m_cloneInfo->toJson());
+        DBPApi::instance()->updateClone(m_cloneInfo->username(), m_cloneInfo->toString());
     } else {
         settings.setValue(cloneInfokey(), QJsonObject());
         LOGD << "Save clone info: NULL";

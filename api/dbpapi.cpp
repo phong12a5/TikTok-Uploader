@@ -1,6 +1,7 @@
 #include "dbpapi.h"
 #include <CkHttp.h>
 #include <CkHttpResponse.h>
+#include <log.h>
 
 DBPApi* DBPApi::sInstance = nullptr;
 

@@ -25,7 +25,7 @@
 #include <QHttpPart>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
-
+#include <api/dbpapi.h>
 #include <webdriverxx.h>
 
 using namespace webdriverxx;
@@ -246,7 +246,6 @@ void ChromeService::initChromeDriver()
     chromeOptions.SetPrefs(sourceJson);
 
     chromeOptions.SetBinary("/usr/bin/google-chrome");
-    LOGD << "Ahihi";
 
 #if 0
     webdriverxx::chrome::MobileEmulation mobileEmulation;
@@ -261,15 +260,7 @@ void ChromeService::initChromeDriver()
     const char * url ="http://localhost:9515/";
     m_drive = new WebDriver(chrome, webdriverxx::Capabilities(),  url);
 
-//    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-//        "source":
-//            "const newProto = navigator.__proto__;"
-//            "delete newProto.webdriver;"
-//            "navigator.__proto__ = newProto;"
-//    })
-
     static_cast<webdriverxx::WebDriver*>(m_drive)->Execute("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
-//    static_cast<webdriverxx::WebDriver*>(m_drive)->DeleteCookies();
     static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com");
 }
 
@@ -326,30 +317,18 @@ void ChromeService::getProxy()
 
 void ChromeService::getClone()
 {
-//    std::string result = WebAPI::getInstance()->getClone(nullptr, "facebook");
-//    QJsonObject cloneInfo = QJsonDocument::fromJson(result.c_str()).object().value("cloneInfo").toObject();
-//    if(!cloneInfo.isEmpty()) {
-//        LOGD << cloneInfo;
-//        serviceData()->setCloneInfo(new CloneInfo(cloneInfo));
-//        if(serviceData()->cloneInfo()) {
-//            serviceData()->cloneInfo()->setAliveStatus(CLONE_ALIVE_STATUS_STORE);
-//        }
-//    }
+    QJsonObject retval = DBPApi::instance()->getClone();
+    if(retval["success"].toBool()) {
+        QJsonObject cloneinfo = retval["clone_info"].toObject();
+        if(!cloneinfo.isEmpty()) {
+            serviceData()->setCloneInfo(new CloneInfo(cloneinfo));
+            if(serviceData()->cloneInfo()) {
+                serviceData()->cloneInfo()->setStatus(CLONE_ALIVE_STATUS_STORE);
+            }
+        }
+    }
 }
 
-void ChromeService::getActions()
-{
-//    std::string actionsStr = WebAPI::getInstance()->doAction(nullptr, FACEBOOK_APP, serviceData()->cloneInfo()->cloneId().toUtf8().data());
-//    LOGD << actionsStr.c_str();
-
-//    QJsonObject doactionObj = QJsonDocument::fromJson(actionsStr.c_str()).object();
-//    QString message = doactionObj.value("message").toString();
-//    bool success = doactionObj.value("success").toBool();
-//    int code = doactionObj.value("code").toInt();
-//    if(success && code == 200) {
-//        serviceData()->setActionsList(doactionObj.value("actions").toArray());
-//    }
-}
 
 void ChromeService::login()
 {
@@ -462,12 +441,9 @@ void ChromeService::onMainProcess()
 {
     LOGD;
     try {
-//        if(serviceData()->getProxy() == nullptr) {
-//            // get proxy first
-//            getProxy();
-//        } else if(serviceData()->cloneInfo() == nullptr) {
-//            getClone();
-//        } else {
+        if(serviceData()->cloneInfo() == nullptr) {
+            getClone();
+        } else {
             if(m_drive == nullptr) {
                 initChromeDriver();
             } else {
@@ -491,7 +467,7 @@ void ChromeService::onMainProcess()
                     }
                 }
             }
-//        }
+        }
     } catch(...) {
         handle_eptr(std::current_exception());
     }
