@@ -16,7 +16,7 @@ public:
 
     QJsonObject getClone();
     QJsonObject getCloneInfo(QString username);
-    QJsonObject updateClone(QString cloneInfoPath);
+    QJsonObject updateClone(QJsonObject cloneInfo);
     QJsonObject getVideoPath(QString author);
     QJsonObject updateVideoStatus(QString video_id, QString status);
 

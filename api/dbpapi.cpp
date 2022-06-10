@@ -35,11 +35,11 @@ QJsonObject DBPApi::getCloneInfo(QString username)
     return response;
 }
 
-QJsonObject DBPApi::updateClone(QString cloneInfoPath)
+QJsonObject DBPApi::updateClone(QJsonObject cloneInfo)
 {
     QJsonObject body, response;
     body["api"] = "update_clone_info";
-    body["clone_info"] = cloneInfoPath;
+    body["clone_info"] = cloneInfo;
     sendRequest ("https://dangbaphong.com/api/tiktok/mm-tiktok-api.php", body, response);
     return response;
 }
