@@ -221,7 +221,6 @@ void ChromeService::initChromeDriver()
 //    args.push_back("--incognito");
     args.push_back("--disable-blink-features=AutomationControlled");
     args.push_back("disable-infobars");
-//    args.push_back("")
 
 #if 0
     if(serviceData()->cloneInfo()->userAgent().isEmpty()) {
@@ -242,8 +241,8 @@ void ChromeService::initChromeDriver()
 
     webdriverxx::JsonObject sourceJson = webdriverxx::JsonObject();
 //    sourceJson.Set("intl.accept_languages", "en,en_US");
-//    sourceJson.Set("profile.password_manager_enabled", false);
-//    sourceJson.Set("credentials_enable_service", false);
+    sourceJson.Set("profile.password_manager_enabled", false);
+    sourceJson.Set("credentials_enable_service", false);
     chromeOptions.SetPrefs(sourceJson);
 
     chromeOptions.SetBinary("/usr/bin/google-chrome");
@@ -270,7 +269,7 @@ void ChromeService::initChromeDriver()
 //    })
 
     static_cast<webdriverxx::WebDriver*>(m_drive)->Execute("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
-    static_cast<webdriverxx::WebDriver*>(m_drive)->DeleteCookies();
+//    static_cast<webdriverxx::WebDriver*>(m_drive)->DeleteCookies();
     static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com");
 }
 

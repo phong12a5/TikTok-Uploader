@@ -119,7 +119,7 @@ private:
     void loadCloneInfo();
 
 private slots:
-    void onCloneInfoChanged(QString action = "");
+    void onCloneInfoChanged();
 
 private:
     AppEnum::SERVICE_TYPE m_type;

@@ -37,6 +37,7 @@ ServiceData::ServiceData(AppEnum::SERVICE_TYPE type, int profileId, QObject *par
 
     m_profileFolderPath = QDir::currentPath() + "/" + m_type_str + "/";
     m_profilePath = m_profileFolderPath + "profiles/" + QString::number(profileId);
+
     loadCloneInfo();
 }
 
@@ -138,30 +139,19 @@ void ServiceData::loadCloneInfo()
         LOGD << "NULL";
     } else {
         setCloneInfo(new CloneInfo(cloneInfo));
-        LOGD << QString("%1|%2|%3").arg(m_cloneInfo->uid(), m_cloneInfo->password(), m_cloneInfo->secretkey());;
+        LOGD << QString("%1|%2").arg(m_cloneInfo->username(), m_cloneInfo->password());;
     }
 }
 
-void ServiceData::onCloneInfoChanged(QString action)
+void ServiceData::onCloneInfoChanged()
 {
-    LOGD << action;
-    if(action != "" && m_cloneInfo != nullptr) {
-//        WebAPI::getInstance()->updateClone(nullptr,
-//                                           action.toUtf8().data(),
-//                                           m_cloneInfo->appname().toUtf8().data(),
-//                                           m_cloneInfo->toString().toUtf8().data());
-    }
-
+    LOGD;
     QSettings settings;
-    if(m_cloneInfo && m_cloneInfo->aliveStatus() == CLONE_ALIVE_STATUS_STORE) {
-        LOGD << "Save clone info: " << m_cloneInfo->uid();
+    if(m_cloneInfo && m_cloneInfo->status() == CLONE_ALIVE_STATUS_STORE) {
+        LOGD << "Save clone info: " << m_cloneInfo->username();
         settings.setValue(cloneInfokey(), m_cloneInfo->toJson());
     } else {
         settings.setValue(cloneInfokey(), QJsonObject());
         LOGD << "Save clone info: NULL";
-        if(m_cloneInfo && m_cloneInfo->aliveStatus() == CLONE_ALIVE_STATUS_CHECKPOINT) {
-            delete m_cloneInfo;
-            m_cloneInfo = nullptr;
-        }
     }
 }

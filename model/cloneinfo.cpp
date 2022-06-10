@@ -6,26 +6,16 @@ CloneInfo::CloneInfo(QJsonObject cloneInfo)
     m_cloneInfo = cloneInfo;
 }
 
-QString CloneInfo::cloneId()
+QString CloneInfo::username()
 {
-    return m_cloneInfo.value(CLONE_INFO_FIELD_ID).toString();
-}
-
-QString CloneInfo::uid()
-{
-    return m_cloneInfo.value(CLONE_INFO_FIELD_UID).toString();
-}
-
-QString CloneInfo::appname()
-{
-    return m_cloneInfo.value(CLONE_INFO_FIELD_APPNAME).toString();
+    return m_cloneInfo.value(CLONE_INFO_FIELD_USERNAME).toString();
 }
 
 void CloneInfo::setPassWord(QString passWord)
 {
     if(this->password() != passWord) {
         m_cloneInfo[CLONE_INFO_FIELD_PASSWORD] = passWord;
-        emit cloneInfoChanged(CLONE_INFO_ACTION_UPDATE_PASSWORD);
+        emit cloneInfoChanged();
     }
 }
 
@@ -34,60 +24,45 @@ QString CloneInfo::password()
     return m_cloneInfo.value(CLONE_INFO_FIELD_PASSWORD).toString();
 }
 
-void CloneInfo::setSecretkey(QString secretkey)
+QString CloneInfo::email()
 {
-    if(this->secretkey() != secretkey) {
-        m_cloneInfo[CLONE_INFO_FIELD_SECRETKEY] = secretkey;
-        emit cloneInfoChanged(CLONE_INFO_ACTION_UPDATE_SECRETKEY);
-    }
+    return m_cloneInfo.value(CLONE_INFO_FIELD_EMAIL).toString();
 }
 
-QString CloneInfo::secretkey()
+void CloneInfo::setEmail(QString email)
 {
-    return m_cloneInfo.value(CLONE_INFO_FIELD_SECRETKEY).toString();
-}
-
-QString CloneInfo::cookies()
-{
-    return m_cloneInfo.value(CLONE_INFO_FIELD_COOKIES).toString();
-}
-
-void CloneInfo::setAliveStatus(QString status, bool forceSync)
-{
-    if(this->aliveStatus() != status || forceSync) {
-        m_cloneInfo[CLONE_INFO_FIELD_ALIVE_STATUS] = status;
-        emit cloneInfoChanged(CLONE_INFO_ACTION_UPDATE_ALIVE_STATUS);
-    }
-}
-
-QString CloneInfo::aliveStatus()
-{
-    return m_cloneInfo.value(CLONE_INFO_FIELD_ALIVE_STATUS).toString();
-}
-
-QString CloneInfo::userAgent()
-{
-    return m_cloneInfo.value(CLONE_INFO_FIELD_USER_AGENT).toString();
-}
-
-void CloneInfo::setUserAgent(QString userAgent)
-{
-    LOGD << userAgent;
-    if(this->userAgent() != userAgent) {
-        m_cloneInfo[CLONE_INFO_FIELD_USER_AGENT] = userAgent;
+    if(this->email() != email) {
+        m_cloneInfo[CLONE_INFO_FIELD_EMAIL] = email;
         emit cloneInfoChanged();
     }
 }
 
-QStringList CloneInfo::pageList()
+int CloneInfo::lastUploadTime()
 {
-    return m_pageList;
+    QString timestamp = m_cloneInfo.value(CLONE_INFO_FIELD_LAST_UPLOAD_TIME).toString();
+    return timestamp.toInt();
 }
 
-void CloneInfo::setPageList(QStringList pages)
+QString CloneInfo::clonedFrome()
 {
-    if(m_pageList != pages) {
-        m_pageList = pages;
+    return m_cloneInfo.value(CLONE_INFO_FIELD_CLONED_FROM).toString();
+}
+
+QString CloneInfo::videoFolderPath()
+{
+    return m_cloneInfo.value(CLONE_INFO_FIELD_VIDEO_FOLDER_PATH).toString();
+}
+
+QString CloneInfo::status()
+{
+    return m_cloneInfo.value(CLONE_INFO_FIELD_STATUS).toString();
+}
+
+void CloneInfo::setStatus(QString status)
+{
+    if(this->status() != status) {
+        m_cloneInfo[CLONE_INFO_FIELD_STATUS] = status;
+        emit cloneInfoChanged();
     }
 }
 
