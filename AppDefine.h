@@ -15,7 +15,7 @@
 #define DEFAULT_IV "Congaubeo@555555"
 
 
-#define MAX_PROFILE_NUMBER          1
+#define MAX_PROFILE_NUMBER          10
 
 #define MAX_SCREEN_LOOP 10
 

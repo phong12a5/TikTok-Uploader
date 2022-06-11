@@ -56,13 +56,6 @@ INCLUDEPATH += $$PWD/chilkat/include
 LIBS += -L$$PWD/chilkat/lib -lchilkat-9.5.0 -lcurl -ldl
 
 
-
-#copy chromedriver.exe to output folder
-!exists( $$OUT_PWD/chromedriver) {
-    message("copy chromedriver")
-    QMAKE_POST_LINK += $$quote(cp $$PWD/chromedriver $$OUT_PWD)
-}
-
 RC_ICONS = Logo.ico
 
 # Default rules for deployment.
@@ -75,6 +68,15 @@ RESOURCES += \
 
 DISTFILES += \
     model/definitions.json
+
+
+CONFIG(debug, debug|release) {
+    !exists( $$OUT_PWD/release/TikTok-Uploader/chromedriver) {
+        message("copy chromedriver")
+        QMAKE_POST_LINK += $$quote(cp $$PWD/release/TikTok-Uploader/chromedriver $$OUT_PWD)
+    }
+}
+
 
 CONFIG(release, debug|release) {
     CONFIG += console

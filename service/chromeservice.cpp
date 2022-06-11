@@ -135,6 +135,19 @@ bool FindElement(webdriverxx::WebDriver* driver, webdriverxx::Element &element, 
         element = driver->FindElement(by);
         return true;
     } catch(...) {
+        LOGD << by.GetStrategy().c_str() << ":" << by.GetValue().c_str() << " not found";
+        return false;
+    }
+}
+
+bool FindAndClickElement(webdriverxx::WebDriver* driver, webdriverxx::Element &element, const webdriverxx::By &by)
+{
+    try {
+        element = driver->FindElement(by);
+        element.Click();
+        return true;
+    } catch(...) {
+        handle_eptr(std::current_exception());
         return false;
     }
 }
@@ -254,7 +267,7 @@ void ChromeService::initChromeDriver()
 //    args.push_back("--headless");
 
     args.push_back("--no-sandbox");
-    args.push_back("--start-maximized");
+//    args.push_back("--start-maximized");
 //    args.push_back("--start-fullscreen");
     args.push_back("--single-process");
     args.push_back("--disable-dev-shm-usage");
@@ -280,10 +293,9 @@ void ChromeService::initChromeDriver()
 
 
     webdriverxx::JsonObject sourceJson = webdriverxx::JsonObject();
-//    sourceJson.Set("intl.accept_languages", "en,en_US");
     sourceJson.Set("profile.password_manager_enabled", false);
     sourceJson.Set("credentials_enable_service", false);
-    sourceJson.Set("exit_type", "Normal");
+    sourceJson.Set("profile", JsonObject().Set("exit_type", "Normal"));
     chromeOptions.SetPrefs(sourceJson);
 
     chromeOptions.SetBinary("/usr/bin/google-chrome");
@@ -297,11 +309,17 @@ void ChromeService::initChromeDriver()
 #endif
 
     chrome.SetChromeOptions(chromeOptions);
+    chrome.SetPath(QString(QDir::currentPath() + "/chromedriver").toStdString());
 
     const char * url ="http://localhost:9515/";
     m_drive = new WebDriver(chrome, webdriverxx::Capabilities(),  url);
 
     static_cast<webdriverxx::WebDriver*>(m_drive)->Execute("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
+
+    JsonObject params;
+    params.Set("source", "Object.defineProperty(navigator, 'webdriver', { get: () => undefined })");
+    static_cast<webdriverxx::WebDriver*>(m_drive)->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
+
     static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com");
 }
 
@@ -374,39 +392,69 @@ void ChromeService::getClone()
 void ChromeService::login()
 {
     LOGD;
-    static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com/login/phone-or-email/email");
-
+//    static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com/login/phone-or-email/email");
     Element element;
-    bool enter_username, enter_password;
+//    bool enter_username, enter_password;
     for(int i = 0; i < 20; i ++) {
-        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//input[@placeholder='Email or Username']"))) {
-            if(!enter_username) {
-                QString username = serviceData()->cloneInfo()->username();
-                for(int i = 0; i < username.length(); i++) {
-                    element.SendKeys(QString(username.at(i)).toStdString());
-                    delayRandom(100,300);
-                }
-                enter_username = true;
-                delay(2000);
-            }
-        }
+//        if(FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//button[@data-e2e='top-login-button' and text()='Log in']"))) {
+//            delay(1000);
+//        } else {
+//            LOGD << "Could not click login button";
+//        }
 
-        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//input[@placeholder='Password']"))) {
-            if(!enter_password) {
-                QString password = serviceData()->cloneInfo()->password();
-                for(int i = 0; i < password.length(); i++) {
-                    element.SendKeys(QString(password.at(i)).toStdString());
-                    delayRandom(100,300);
-                }
-                delay(2000);
-                enter_password = true;
-            }
-        }
+////        //*[text()='Use phone / email / username']
+//        if(FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//*[text()='Use phone / email / username']"))) {
+//            delay(1000);
+//        } else {
+//            LOGD << "Could not click phone or email button";
+//            if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//*[@data-e2e='login-frame']"))) {
+//                std::vector<Element>  iframes= static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByTag("iframe"));
+//                if(iframes.size() > 0) {
+//                    static_cast<webdriverxx::WebDriver*>(m_drive)->SetFocusToFrame(iframes[0]);
+//                }
+//            }
+//        }
 
-        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//button[text()='Log in']"))) {
-            element.Submit();
-            delay(3000);
-        }
+//        if(FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//*[text()='Log in with email or username']"))) {
+//            delay(2000);
+//        } else {
+//            LOGD << "Could not click 'Log in with email or username' button";
+//        }
+
+        //Log in with email or username
+
+//        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//input[@placeholder='Email or username']"))) {
+//            if(!enter_username) {
+//                QString username = serviceData()->cloneInfo()->username();
+//                element.Click();
+//                element.Clear();
+//                for(int i = 0; i < username.length(); i++) {
+//                    element.SendKeys(QString(username.at(i)).toStdString());
+//                    delayRandom(100,300);
+//                }
+//                enter_username = true;
+//                delay(2000);
+//            }
+//        }
+
+//        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//input[@placeholder='Password']"))) {
+//            if(!enter_password) {
+//                element.Click();
+//                element.Clear();
+//                QString password = serviceData()->cloneInfo()->password();
+//                for(int i = 0; i < password.length(); i++) {
+//                    element.SendKeys(QString(password.at(i)).toStdString());
+//                    delayRandom(100,300);
+//                }
+//                delay(2000);
+//                enter_password = true;
+//            }
+//        }
+
+//        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//button[text()='Log in']"))) {
+//            element.Submit();
+//            delay(3000);
+//        }
 
         //*[@data-e2e='profile-icon']
         if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//*[@data-e2e='profile-icon']"))) {
@@ -485,7 +533,7 @@ void ChromeService::onMainProcess()
                         feed();
                         long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
                         qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
-                        if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
+                        if(currentTime - lastUploadTime > (8 * 60 * 60 * 1000)) {
                             uploadNewVideo();
                         }
                         finish();
@@ -513,7 +561,7 @@ void ChromeService::onMainProcess()
 }
 
 void ChromeService::feed() {
-    int operations = QRandomGenerator::global()->bounded(10) + 5;
+    int operations = QRandomGenerator::global()->bounded(20) + 40;
     for(int i = 0 ; i <operations; i++) {
         Element element;
         if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("/html"))) {
@@ -538,7 +586,7 @@ void ChromeService::feed() {
         }
 #endif
 
-        delayRandom(500, 2000);
+        delayRandom(10000, 20000);
     }
 }
 
