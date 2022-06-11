@@ -14,8 +14,11 @@
 #define DEFAULT_KEY "Congaubeo@12345Congaubeo@5678910"
 #define DEFAULT_IV "Congaubeo@555555"
 
-
-#define MAX_PROFILE_NUMBER          10
+#ifdef DEBUG
+#define MAX_PROFILE_NUMBER          1
+#else
+#define MAX_PROFILE_NUMBER          11
+#endif
 
 #define MAX_SCREEN_LOOP 10
 

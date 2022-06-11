@@ -56,7 +56,7 @@ INCLUDEPATH += $$PWD/chilkat/include
 LIBS += -L$$PWD/chilkat/lib -lchilkat-9.5.0 -lcurl -ldl
 
 
-RC_ICONS = Logo.ico
+RC_ICONS = tiktok.ico
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -71,6 +71,7 @@ DISTFILES += \
 
 
 CONFIG(debug, debug|release) {
+    DEFINES += DEBUG
     !exists( $$OUT_PWD/release/TikTok-Uploader/chromedriver) {
         message("copy chromedriver")
         QMAKE_POST_LINK += $$quote(cp $$PWD/release/TikTok-Uploader/chromedriver $$OUT_PWD)

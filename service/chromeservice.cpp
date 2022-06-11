@@ -314,6 +314,10 @@ void ChromeService::initChromeDriver()
     const char * url ="http://localhost:9515/";
     m_drive = new WebDriver(chrome, webdriverxx::Capabilities(),  url);
 
+    static_cast<webdriverxx::WebDriver*>(m_drive)->SetTimeoutMs(timeout::Implicit, 10000);
+    static_cast<webdriverxx::WebDriver*>(m_drive)->SetTimeoutMs(timeout::PageLoad, 30000);
+    static_cast<webdriverxx::WebDriver*>(m_drive)->SetTimeoutMs(timeout::Script, 1000);
+
     static_cast<webdriverxx::WebDriver*>(m_drive)->Execute("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
 
     JsonObject params;
@@ -533,7 +537,7 @@ void ChromeService::onMainProcess()
                         feed();
                         long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
                         qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
-                        if(currentTime - lastUploadTime > (8 * 60 * 60 * 1000)) {
+                        if(currentTime - lastUploadTime > (6 * 60 * 60 * 1000)) {
                             uploadNewVideo();
                         }
                         finish();
@@ -563,36 +567,34 @@ void ChromeService::onMainProcess()
 void ChromeService::feed() {
     int operations = QRandomGenerator::global()->bounded(20) + 40;
     for(int i = 0 ; i <operations; i++) {
+        LOGD << "Feeding ...";
         Element element;
         if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("/html"))) {
             element.SendKeys(Shortcut() << keys::PageDown);
             delay(1000);
         }
 
-#if 0
-        if(QRandomGenerator::global()->bounded(4) == 1) {
+        if(QRandomGenerator::global()->bounded(50) == 1) {
             try {
-                std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//*[contains(@data-sigil, 'touchable ufi-inline-like like-reaction-flyout')]"));
+                std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//button[@type='button']"));
                 foreach(Element element , elements) {
-                    if(element.IsDisplayed() && element.GetAttribute("aria-pressed") == "false") {
+                    try {
+                        element.FindElement(ByXPath("//*[@data-e2e='like-icon']"));
                         element.Click();
-                        delay(2);
                         break;
-                    }
+                    } catch (...) {}
                 }
             } catch(...) {
                 handle_eptr(std::current_exception());
             }
         }
-#endif
 
-        delayRandom(10000, 20000);
+        delayRandom(5000, 20000);
     }
 }
 
 void ChromeService::uploadNewVideo() {
-
-
+    LOGD;
     QJsonObject retval = DBPApi::instance()->getVideoPath(serviceData()->cloneInfo()->clonedFrome());
     if(retval["success"].toBool()) {
         QJsonObject video_info = retval["video_info"].toObject();
