@@ -53,7 +53,8 @@ HEADERS += \
 
 INCLUDEPATH += $$PWD/webdriverxx/src/include
 INCLUDEPATH += $$PWD/chilkat/include
-LIBS += -L$$PWD/chilkat/lib -lchilkat-9.5.0 -lcurl
+LIBS += -L$$PWD/chilkat/lib -lchilkat-9.5.0 -lcurl -ldl
+
 
 
 #copy chromedriver.exe to output folder
@@ -74,4 +75,8 @@ RESOURCES += \
 
 DISTFILES += \
     model/definitions.json
+
+CONFIG(release, debug|release) {
+    CONFIG += console
+}
 
