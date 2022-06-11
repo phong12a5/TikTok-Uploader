@@ -374,6 +374,46 @@ void ChromeService::getClone()
 void ChromeService::login()
 {
     LOGD;
+    static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com/login/phone-or-email/email");
+
+    Element element;
+    bool enter_username, enter_password;
+    for(int i = 0; i < 20; i ++) {
+        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//input[@placeholder='Email or Username']"))) {
+            if(!enter_username) {
+                QString username = serviceData()->cloneInfo()->username();
+                for(int i = 0; i < username.length(); i++) {
+                    element.SendKeys(QString(username.at(i)).toStdString());
+                    delayRandom(100,300);
+                }
+                enter_username = true;
+                delay(2000);
+            }
+        }
+
+        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//input[@placeholder='Password']"))) {
+            if(!enter_password) {
+                QString password = serviceData()->cloneInfo()->password();
+                for(int i = 0; i < password.length(); i++) {
+                    element.SendKeys(QString(password.at(i)).toStdString());
+                    delayRandom(100,300);
+                }
+                delay(2000);
+                enter_password = true;
+            }
+        }
+
+        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//button[text()='Log in']"))) {
+            element.Submit();
+            delay(3000);
+        }
+
+        //*[@data-e2e='profile-icon']
+        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, webdriverxx::ByXPath("//*[@data-e2e='profile-icon']"))) {
+            break;
+        }
+        delayRandom(2000, 3000);
+    }
 }
 
 bool ChromeService::checkProxy(PROXY proxy)
@@ -439,13 +479,17 @@ void ChromeService::onMainProcess()
                 LOGD << AppEnum::scrIdStr(screen_id);
                 switch (screen_id) {
                 case AppEnum::E_SCREEN_HOME: {
-                    feed();
-                    long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
-                    qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
-                    if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
-                        uploadNewVideo();
+                    if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//button[@data-e2e='top-login-button' and text()='Log in']"))) {
+                        login();
+                    } else {
+                        feed();
+                        long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
+                        qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
+                        if(currentTime - lastUploadTime > (12 * 60 * 60 * 1000)) {
+                            uploadNewVideo();
+                        }
+                        finish();
                     }
-                    finish();
                 }
                     break;
                 default:
