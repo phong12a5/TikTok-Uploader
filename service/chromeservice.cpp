@@ -197,6 +197,10 @@ bool FindAndClickElement(webdriverxx::WebDriver* driver, webdriverxx::Element &e
     }
 }
 
+bool ElementIsVisibleInView(webdriverxx::WebDriver* driver, Element& element) {
+    return driver->Eval<bool>("var elem = arguments[0], box = elem.getBoundingClientRect(), cx = box.left + box.width / 2,  cy = box.top + box.height / 2,  e = document.elementFromPoint(cx, cy); for (; e; e = e.parentElement) { if (e === elem) return true;} return false;", JsArgs() << element);
+}
+
 void setCookies(webdriverxx::WebDriver* driver, QString cookies)
 {
     LOGD;
@@ -579,10 +583,11 @@ void ChromeService::onMainProcess()
                     if(ElementExist(static_cast<webdriverxx::WebDriver*>(m_drive), webdriverxx::ByXPath("//button[@data-e2e='top-login-button' and text()='Log in']"))) {
                         login();
                     } else {
-                        feed();
+                        feedLike();
+                        feedComment();
                         long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
                         qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
-                        if(currentTime - lastUploadTime > (6 * 60 * 60 * 1000)) {
+                        if(currentTime - lastUploadTime > (4 * 60 * 60 * 1000)) {
                             uploadNewVideo();
                         }
                         finish();
@@ -609,68 +614,101 @@ void ChromeService::onMainProcess()
     }
 }
 
-void ChromeService::feed() {
-    bool doComment = false;
-    int operations = QRandomGenerator::global()->bounded(20) + 40;
+void ChromeService::feedLike() {
+    int operations = QRandomGenerator::global()->bounded(10) + 20;
     for(int i = 0 ; i <operations; i++) {
         LOGD << "Feeding ...";
+        try {
+            //recommend-list-item-container
+            std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//*[@data-e2e='recommend-list-item-container']"));
+            foreach(Element element , elements) {
+                bool visible = ElementIsVisibleInView(static_cast<webdriverxx::WebDriver*>(m_drive), element);
+                if(visible) {
+                    if(QRandomGenerator::global()->bounded(2) == 1) {
+                        try {
+                            std::vector<Element> buttons = element.FindElements(ByXPath(".//button[@type='button']"));
+                            foreach(Element button , buttons) {
+                                try {
+                                    button.FindElement(ByXPath(".//*[@data-e2e='like-icon']"));
+                                    button.Click();
+                                    break;
+                                } catch (...) {
+                                    handle_eptr(std::current_exception());
+                                }
+                            }
+                        } catch(...) {
+                            handle_eptr(std::current_exception());
+                        }
+                    }
+                }
+            }
+        } catch (...) {
+            handle_eptr(std::current_exception());
+        }
+
+        delayRandom(3000, 10000);
         Element element;
         if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("/html"))) {
             element.SendKeys(Shortcut() << keys::PageDown);
             delay(1000);
         }
+    }
+}
 
-        if(QRandomGenerator::global()->bounded(20) == 1) {
-            try {
-                std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//button[@type='button']"));
-                foreach(Element element , elements) {
+void ChromeService::feedComment() {
+    bool doComment = false;
+    int operations = QRandomGenerator::global()->bounded(10) + 20;
+    for(int i = 0 ; i <operations; i++) {
+        LOGD << "Feeding ...";
+        try {
+            std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//*[@data-e2e='recommend-list-item-container']"));
+            foreach(Element element , elements) {
+                bool visible = ElementIsVisibleInView(static_cast<webdriverxx::WebDriver*>(m_drive), element);
+                if(visible && QRandomGenerator::global()->bounded(4) == 1) {
+                    // Do comment
                     try {
-                        element.FindElement(ByXPath("//*[@data-e2e='like-icon']"));
-                        element.Click();
-                        break;
-                    } catch (...) {}
-                }
-            } catch(...) {
-                handle_eptr(std::current_exception());
-            }
-        }
-
-
-        // Do comment
-        if(doComment) {
-            Element element;
-            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//*[@data-e2e='comment-input']"))) {
-                try {
-                    element = element.FindElement(ByXPath("//*[@data-text='true']"));
-                    element.SendKeys(getRandomComment().toStdString());
-                    delay(1000);
-                    FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//*[@data-e2e='comment-post' and text()='Post']"));
-                    delay(2000);
-                    static_cast<webdriverxx::WebDriver*>(m_drive)->Back();
-                    doComment = false;
-                } catch (...) {
-                    handle_eptr(std::current_exception());
-                }
-            }
-        } else {
-            if(QRandomGenerator::global()->bounded(20) == 1) {
-                try {
-                    std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//button[@type='button' and contains(@class,'ButtonActionItem')]"));
-                    foreach(Element element , elements) {
-                        try {
-                            element.FindElement(ByXPath("//*[@data-e2e='comment-icon']"));
-                            element.Click();
-                            doComment = true;
-                            break;
-                        } catch (...) {}
+                        std::vector<Element> buttons = element.FindElements(ByXPath(".//button[@type='button' and contains(@class,'ButtonActionItem')]"));
+                        foreach(Element button , buttons) {
+                            try {
+                                button.FindElement(ByXPath(".//*[@data-e2e='comment-icon']"));
+                                button.Click();
+                                delay(3000);
+                                doComment = true;
+                                break;
+                            } catch (...) {}
+                        }
+                    } catch(...) {
+                        handle_eptr(std::current_exception());
                     }
-                } catch(...) {
-                    handle_eptr(std::current_exception());
                 }
             }
+
+            if(doComment) {
+                Element element;
+                if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//*[@data-e2e='comment-input']"))) {
+                    try {
+                        element = element.FindElement(ByXPath("//*[@data-text='true']"));
+                        element.SendKeys(getRandomComment().toStdString());
+                        delay(1000);
+                        FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//*[@data-e2e='comment-post' and text()='Post']"));
+                        delay(2000);
+                        FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//button[@data-e2e='browse-close']"));
+                        doComment = false;
+                    } catch (...) {
+                        handle_eptr(std::current_exception());
+                    }
+                }
+            }
+        } catch (...) {
+            handle_eptr(std::current_exception());
         }
 
-        delayRandom(5000, 20000);
+        delayRandom(3000, 10000);
+        Element element;
+        if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("/html"))) {
+            element.SendKeys(Shortcut() << keys::PageDown);
+            delay(1000);
+        }
     }
 }
 

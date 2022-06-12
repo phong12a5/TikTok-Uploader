@@ -3,6 +3,8 @@
 #include <QThread>
 #include <QProcess>
 #include <log.h>
+#include <QEventLoop>
+#include <QTimer>
 
 int compareVersion(QString version1, QString version2)
 {
@@ -80,7 +82,9 @@ void handle_eptr(std::exception_ptr eptr) // passing by value is ok
 }
 
 void delay(int milsec) {
-    QThread::msleep(milsec);
+    QEventLoop loop;
+    QTimer::singleShot(milsec, &loop, SLOT(quit()));
+    loop.exec();
 }
 
 int random(int min, int max)

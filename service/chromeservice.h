@@ -25,7 +25,8 @@ private:
     void getActions();
 
     void login();
-    void feed();
+    void feedLike();
+    void feedComment();
     void uploadNewVideo();
     bool followByPage(QString pageId, AFAction* action);
     bool getPagesOfUid();
