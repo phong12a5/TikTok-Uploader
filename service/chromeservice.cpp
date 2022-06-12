@@ -623,22 +623,20 @@ void ChromeService::feedLike() {
             std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//*[@data-e2e='recommend-list-item-container']"));
             foreach(Element element , elements) {
                 bool visible = ElementIsVisibleInView(static_cast<webdriverxx::WebDriver*>(m_drive), element);
-                if(visible) {
-                    if(QRandomGenerator::global()->bounded(2) == 1) {
-                        try {
-                            std::vector<Element> buttons = element.FindElements(ByXPath(".//button[@type='button']"));
-                            foreach(Element button , buttons) {
-                                try {
-                                    button.FindElement(ByXPath(".//*[@data-e2e='like-icon']"));
-                                    button.Click();
-                                    break;
-                                } catch (...) {
-                                    handle_eptr(std::current_exception());
-                                }
+                if(visible && QRandomGenerator::global()->bounded(20) == 1) {
+                    try {
+                        std::vector<Element> buttons = element.FindElements(ByXPath(".//button[@type='button']"));
+                        foreach(Element button , buttons) {
+                            try {
+                                button.FindElement(ByXPath(".//*[@data-e2e='like-icon']"));
+                                button.Click();
+                                break;
+                            } catch (...) {
+                                handle_eptr(std::current_exception());
                             }
-                        } catch(...) {
-                            handle_eptr(std::current_exception());
                         }
+                    } catch(...) {
+                        handle_eptr(std::current_exception());
                     }
                 }
             }
@@ -664,7 +662,7 @@ void ChromeService::feedComment() {
             std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//*[@data-e2e='recommend-list-item-container']"));
             foreach(Element element , elements) {
                 bool visible = ElementIsVisibleInView(static_cast<webdriverxx::WebDriver*>(m_drive), element);
-                if(visible && QRandomGenerator::global()->bounded(4) == 1) {
+                if(visible && QRandomGenerator::global()->bounded(20) == 1) {
                     // Do comment
                     try {
                         std::vector<Element> buttons = element.FindElements(ByXPath(".//button[@type='button' and contains(@class,'ButtonActionItem')]"));
