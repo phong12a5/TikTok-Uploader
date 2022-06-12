@@ -54,7 +54,7 @@ QString getRandomUserAgent()
     return listUserAgen.at(res).toString();
 }
 
-QString getCaption() {
+QString getRandomCaption() {
   QStringList captionList =   QStringList()
           << "Hi everyone!"
           << "Are you ready ...?"
@@ -88,6 +88,51 @@ QString getCaption() {
           << "Broken heart ... :((";
 
   return captionList.at(QRandomGenerator::global()->bounded(captionList.length()));
+}
+
+QString getRandomComment() {
+    QStringList iconList = QStringList() \
+    << "(y)	"
+     << ">:("
+     << ">:-("
+     << "O:)"
+     << "O:-)"
+     << ":-P" << ":P"  << ":-p" << ":p" << "=P"
+     << "3:)" << "3:-)"
+     << ":putnam:"
+     << "<3"
+     << ">:O" << ">:-O" << ">:o" << ">:-o"
+     << ":-(" << ":(" << ":[" << "=("
+     << ":/" << ":-/" << ":\\"
+     << "^_^"
+     << ":|]"
+     << "o.O" << "O.o"
+     << "8-|" << "8|" << "B-|" << "B|"
+     << ":-O" << ":O" << ":-o" << ":o"
+     << "3:)" << "3:-)"
+     << ":-*" << ":*"
+     << "(^^^)"
+     << ":’("
+     << "-_-"
+     << "8-)" << "8)" << "B-)" << "B)"
+     << ":-(" << ":(" << ":[" << "=("
+     << ":v"
+     << ":-)" << ":)" << ":]" << "=)"
+     << ":3"
+     << ">.<"
+     << ":-D" << ":D" << "=D"
+     << ":poop:"
+     << "<(\")"
+     << "T_T";
+
+    QStringList textList = QStringList() << "wow .. " << "hi " << "good " << "fun " << "great! " << "haha .. " << "lol" << "be angry.. " << "hot " << "cold " << "look here " << "hummmmm " << "humm " << "noooo " << "oh " << "my god " << "sad " << "good job..";
+
+    return (QRandomGenerator::global()->bounded(2) == 1? textList.at(QRandomGenerator::global()->bounded(textList.size())) : "") +
+            (QRandomGenerator::global()->bounded(2) == 1? (" ") + iconList.at(QRandomGenerator::global()->bounded(iconList.size())) : "") +
+            (QRandomGenerator::global()->bounded(2) == 1? (" ") + iconList.at(QRandomGenerator::global()->bounded(iconList.size())) : "") +
+            (QRandomGenerator::global()->bounded(2) == 1? (" ") + iconList.at(QRandomGenerator::global()->bounded(iconList.size())) : "") +
+            (QRandomGenerator::global()->bounded(2) == 1? (" ") + iconList.at(QRandomGenerator::global()->bounded(iconList.size())) : "") +
+            (QRandomGenerator::global()->bounded(2) == 1? (" ") + iconList.at(QRandomGenerator::global()->bounded(iconList.size())) : "");
 }
 
 bool inputText(webdriverxx::WebDriver* driver, QString textInput,const webdriverxx::By& by)
@@ -565,6 +610,7 @@ void ChromeService::onMainProcess()
 }
 
 void ChromeService::feed() {
+    bool doComment = false;
     int operations = QRandomGenerator::global()->bounded(20) + 40;
     for(int i = 0 ; i <operations; i++) {
         LOGD << "Feeding ...";
@@ -574,7 +620,7 @@ void ChromeService::feed() {
             delay(1000);
         }
 
-        if(QRandomGenerator::global()->bounded(50) == 1) {
+        if(QRandomGenerator::global()->bounded(20) == 1) {
             try {
                 std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//button[@type='button']"));
                 foreach(Element element , elements) {
@@ -586,6 +632,41 @@ void ChromeService::feed() {
                 }
             } catch(...) {
                 handle_eptr(std::current_exception());
+            }
+        }
+
+
+        // Do comment
+        if(doComment) {
+            Element element;
+            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//*[@data-e2e='comment-input']"))) {
+                try {
+                    element = element.FindElement(ByXPath("//*[@data-text='true']"));
+                    element.SendKeys(getRandomComment().toStdString());
+                    delay(1000);
+                    FindAndClickElement(static_cast<webdriverxx::WebDriver*>(m_drive), element, ByXPath("//*[@data-e2e='comment-post' and text()='Post']"));
+                    delay(2000);
+                    static_cast<webdriverxx::WebDriver*>(m_drive)->Back();
+                    doComment = false;
+                } catch (...) {
+                    handle_eptr(std::current_exception());
+                }
+            }
+        } else {
+            if(QRandomGenerator::global()->bounded(20) == 1) {
+                try {
+                    std::vector<Element> elements = static_cast<webdriverxx::WebDriver*>(m_drive)->FindElements(ByXPath("//button[@type='button' and contains(@class,'ButtonActionItem')]"));
+                    foreach(Element element , elements) {
+                        try {
+                            element.FindElement(ByXPath("//*[@data-e2e='comment-icon']"));
+                            element.Click();
+                            doComment = true;
+                            break;
+                        } catch (...) {}
+                    }
+                } catch(...) {
+                    handle_eptr(std::current_exception());
+                }
             }
         }
 
@@ -623,7 +704,7 @@ void ChromeService::uploadNewVideo() {
                            // Step2: input caption
                            if(FindElement(static_cast<webdriverxx::WebDriver*>(m_drive), element,ByXPath("//*[@data-text='true']"))) {
                               if(element.GetText().empty()) {
-                                  QString caption = getCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending .";
+                                  QString caption = getRandomCaption() + " #fyp #foryou #cutegirl #cutebaby #xuhuong #trending .";
                                   element.SendKeys(caption.toStdString());
                               } else {
                                   // Step3: input file
