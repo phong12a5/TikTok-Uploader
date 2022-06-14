@@ -311,39 +311,39 @@ void ChromeService::initChromeDriver()
     std::vector<std::string> args;
     args.push_back("--user-data-dir=" + serviceData()->profilePath().toStdString());
     args.push_back("--ignore-certificate-errors");
-//    args.push_back("--proxy-server=" + serviceData()->getProxy()->toString());
-    args.push_back("--disable-features=ChromeWhatsNewUI");
-//    args.push_back("--headless");
+    //    args.push_back("--proxy-server=" + serviceData()->getProxy()->toString());
+    //    args.push_back("--disable-features=ChromeWhatsNewUI");
+    //    args.push_back("--headless");
 
-    args.push_back("--no-sandbox");
-//    args.push_back("--start-maximized");
-//    args.push_back("--start-fullscreen");
-    args.push_back("--single-process");
-    args.push_back("--disable-dev-shm-usage");
-//    args.push_back("--incognito");
+    //    args.push_back("--no-sandbox");
+    //    args.push_back("--start-maximized");
+    //    args.push_back("--window-size=1386,1275");
+    ////    args.push_back("--start-fullscreen");
+    //    args.push_back("--single-process");
+    //    args.push_back("--disable-dev-shm-usage");
     args.push_back("--disable-blink-features=AutomationControlled");
-    args.push_back("disable-infobars");
-
+    //    args.push_back("--disable-infobars'");
+    args.push_back("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36");
 #if 0
     if(serviceData()->cloneInfo()->userAgent().isEmpty()) {
         serviceData()->cloneInfo()->setUserAgent(getRandomUserAgent());
     }
 #endif
 
-    args.push_back("--disable-notifications");
-//    args.push_back("--window-position=1500,0");
+    //    args.push_back("--disable-notifications");
+    //    args.push_back("--window-position=1500,0");
     chromeOptions.SetArgs(args);
 
     std::vector<std::string> switches;
     switches.push_back("enable-automation");
-    switches.push_back("load-extension");
+    //    switches.push_back("load-extension");
     chromeOptions.SetExcludeSwitches(switches);
     chromeOptions.SetUseAutomationExtension(false);
 
 
     webdriverxx::JsonObject sourceJson = webdriverxx::JsonObject();
-    sourceJson.Set("profile.password_manager_enabled", false);
-    sourceJson.Set("credentials_enable_service", false);
+    //    sourceJson.Set("profile.password_manager_enabled", false);
+    //    sourceJson.Set("credentials_enable_service", false);
     sourceJson.Set("profile", JsonObject().Set("exit_type", "Normal"));
     chromeOptions.SetPrefs(sourceJson);
 
@@ -352,28 +352,55 @@ void ChromeService::initChromeDriver()
 #if 0
     webdriverxx::chrome::MobileEmulation mobileEmulation;
     mobileEmulation.SetdeviceName("iPhone X");
-//    mobileEmulation.SetuserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1");
-//    mobileEmulation.SetdeviceMetrics(webdriverxx::chrome::device::deviceMetrics().Settouch(true).Setwidth(375).Setheight(812).SetpixelRatio(3));
+    //    mobileEmulation.SetuserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Mobile/15E148 Safari/604.1");
+    //    mobileEmulation.SetdeviceMetrics(webdriverxx::chrome::device::deviceMetrics().Settouch(true).Setwidth(375).Setheight(812).SetpixelRatio(3));
     chromeOptions.SetMobileEmulation(mobileEmulation);
 #endif
 
     chrome.SetChromeOptions(chromeOptions);
-    chrome.SetPath(QString(QDir::currentPath() + "/chromedriver").toStdString());
+    chrome.SetPath("/usr/bin/chromedriver");
 
     const char * url ="http://localhost:9515/";
     m_drive = new WebDriver(chrome, webdriverxx::Capabilities(),  url);
+    WebDriver* driver = static_cast<webdriverxx::WebDriver*>(m_drive);
 
-    static_cast<webdriverxx::WebDriver*>(m_drive)->SetTimeoutMs(timeout::Implicit, 10000);
-    static_cast<webdriverxx::WebDriver*>(m_drive)->SetTimeoutMs(timeout::PageLoad, 30000);
-    static_cast<webdriverxx::WebDriver*>(m_drive)->SetTimeoutMs(timeout::Script, 1000);
+    driver->SetTimeoutMs(timeout::Implicit, 10000);
+    driver->SetTimeoutMs(timeout::PageLoad, 30000);
+    driver->SetTimeoutMs(timeout::Script, 1000);
 
-    static_cast<webdriverxx::WebDriver*>(m_drive)->Execute("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
+    driver->Execute("Object.defineProperty(navigator, 'webdriver', {get: () => undefined, has: () => false})");
+    driver->Execute("Object.defineProperty(navigator, 'platform', {get: () => 'MacIntel'})");
 
     JsonObject params;
-    params.Set("source", "Object.defineProperty(navigator, 'webdriver', { get: () => undefined })");
-    static_cast<webdriverxx::WebDriver*>(m_drive)->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
+    params.Set("source", "Object.defineProperty(navigator, 'platform', { get: () => 'MacIntel' })");
+    driver->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
 
-    static_cast<webdriverxx::WebDriver*>(m_drive)->Navigate("https://www.tiktok.com");
+    params.Set("source", "Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 1 })");
+    driver->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
+
+    params.Set("userAgent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36");
+    driver->ExecuteCdpCommand("Network.setUserAgentOverride", params);
+
+    params.Set("source", "\
+               let objectToInspect = window,\
+               result = [];\
+            console.log(navigator.__proto__);\
+    while(objectToInspect !== null) \
+    { result = result.concat(Object.getOwnPropertyNames(objectToInspect));\
+        objectToInspect = Object.getPrototypeOf(objectToInspect); }\
+    result.forEach(p => p.match(/.+_.+_(Array|Promise|Symbol)/ig)\
+            &&delete window[p]&&console.log('removed',p))");
+            driver->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
+
+
+    params.Set("source", "\
+               const newProto = navigator.__proto__;\
+            delete newProto.webdriver;\
+    navigator.__proto__ = newProto;");
+
+
+    driver->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
+    driver->Navigate("https://www.tiktok.com/foryou?is_copy_url=1&is_from_webapp=v1");
 }
 
 void ChromeService::getProxy()

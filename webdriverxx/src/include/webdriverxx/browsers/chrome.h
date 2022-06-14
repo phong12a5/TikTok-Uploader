@@ -94,7 +94,7 @@ struct ChromeOptions : JsonObject {
 	WEBDRIVERXX_PROPERTY(Prefs,                     "prefs",            JsonObject)
 	WEBDRIVERXX_PROPERTY(Detach,                    "detach",           bool)
 	WEBDRIVERXX_PROPERTY(DebuggerAddress,           "debuggerAddress",  std::string)
-        WEBDRIVERXX_PROPERTY(UseAutomationExtension,           "useAutomationExtension",  bool)
+        WEBDRIVERXX_PROPERTY(UseAutomationExtension,    "useAutomationExtension",  bool)
         WEBDRIVERXX_PROPERTY(ExcludeSwitches,           "excludeSwitches",  std::vector<std::string>)
         WEBDRIVERXX_PROPERTY(MinidumpPath,              "minidumpPath",     std::string)
 	WEBDRIVERXX_PROPERTY(MobileEmulation,           "mobileEmulation",  chrome::MobileEmulation)

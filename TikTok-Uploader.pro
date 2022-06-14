@@ -72,10 +72,11 @@ DISTFILES += \
 
 CONFIG(debug, debug|release) {
     DEFINES += DEBUG
-    !exists( $$OUT_PWD/release/TikTok-Uploader/chromedriver) {
-        message("copy chromedriver")
-        QMAKE_POST_LINK += $$quote(cp $$PWD/release/TikTok-Uploader/chromedriver $$OUT_PWD)
-    }
+
+#    !exists( $$OUT_PWD/release/TikTok-Uploader/chromedriver) {
+#        message("copy chromedriver")
+#        QMAKE_POST_LINK += $$quote(cp $$PWD/release/TikTok-Uploader/chromedriver $$OUT_PWD)
+#    }
 }
 
 
