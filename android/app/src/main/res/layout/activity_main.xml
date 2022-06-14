@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:text="Token"
+        android:textStyle="bold"
+     />
+
+    <EditText
+        android:id="@+id/txtToken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:ems="10"
+        android:hint="Token"
+        android:inputType="textPersonName"
+     />
+
+    <TextView
+        android:id="@+id/AppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="App Name"
+        android:layout_below="@+id/txtToken"
+       />
+
+    <Spinner
+        android:id="@+id/listSupportedFarmer"
+        android:layout_marginLeft="20dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtToken"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/AppName"
+        android:entries="@array/supportedApps" />
+
+    <TextView
+        android:id="@+id/AndroidID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Android ID: "
+        android:layout_below="@+id/AppName"
+        />
+
+    <TextView
+        android:id="@+id/androidIDValue"
+        android:layout_marginLeft="24dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AppName"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/AppName"
+        android:text="NaN"
+        android:alpha="0.8"
+        />
+
+    <TextView
+        android:id="@+id/Imei1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="IMEI 1: "
+        android:layout_below="@+id/AndroidID"
+        />
+
+    <TextView
+        android:id="@+id/Imei1Value"
+        android:layout_marginLeft="24dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AndroidID"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/AppName"
+        android:text="No Slot"
+        android:alpha="0.8"
+        />
+
+    <TextView
+        android:id="@+id/Imei2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="IMEI 2: "
+        android:layout_below="@+id/Imei1"
+        />
+
+    <TextView
+        android:id="@+id/Imei2Value"
+        android:layout_marginLeft="24dp"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Imei1"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/AppName"
+        android:text="No Slot"
+        android:alpha="0.8"
+        />
+
+    <Button
+        android:id="@+id/buttonTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/btn_start"
+        android:layout_marginBottom="20dp"
+        android:alpha="0.0"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/version"
+        android:layout_marginBottom="20dp"
+       />
+
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="version code : 21"
+        />
+
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>

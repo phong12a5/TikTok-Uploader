@@ -2,3 +2,7 @@
 *.pro.user
 *.pro.user.*
 *.DS_Store
+
+android/.idea
+android/.gradle
+android/build

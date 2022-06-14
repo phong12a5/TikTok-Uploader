@@ -1,0 +1,12 @@
+[
+  {
+    "screen_id": "SCREEN_FACEBOOK_HOME",
+    "definition": [
+      [
+        "email",
+        "password"
+      ],
+      []
+    ]
+  }
+]

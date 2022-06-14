@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">AutofarmerXYZ</string>
+    <string-array name="supportedApps">
+        <item>Facebook</item>
+        <item>Instagram</item>
+
+    </string-array>
+    <string-array name="listLinkAvatar">
+        <item>https://farm8.staticflickr.com/7547/27918967006_95877638ab_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7322/27952996065_2608bef51d_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7435/27918967116_e3da53fe8a_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7611/27952995985_b8d352fc11_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7308/27952996025_9e2751ef44_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7358/27952996135_e4eda8fd31_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7310/27918967166_76936a611f_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7273/27952996125_8ff8276bf9_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7507/27918967236_820689b606_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7299/27952996235_31e7ac6b23_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7658/27918967266_777f35b186_b_d.jpg</item>
+        <item>https://farm8.staticflickr.com/7081/27918967346_152ee94e50_b_d.jpg</item>
+        <item>https://farm4.staticflickr.com/3951/32344815574_983ddd34ae_b_d.jpg</item>
+        <item>https://farm1.staticflickr.com/778/32374580443_01960dafd6_b_d.jpg</item>
+        <item>https://farm1.staticflickr.com/770/32374580063_51d6eb2692_b_d.jpg</item>
+        <item>https://farm1.staticflickr.com/776/33147993216_dd5ace9513_b_d.jpg</item>
+        <item> https://farm4.staticflickr.com/3751/33062122581_f2cef3dc86_b_d.jpg</item>
+        <item>https://farm4.staticflickr.com/3833/33159602026_78cd400dbb_b_d.jpg</item>
+        <item>https://farm4.staticflickr.com/3873/33159602146_17010328d9_b_d.jpg</item>
+        <item>https://farm4.staticflickr.com/3856/32356671124_38aae69ed2_b_d.jpg</item>
+
+    </string-array>
+
+    <string name="android_auto_update_dialog_title">New version found</string>
+
+    <string name="android_auto_update_notify_ticker">Find new version, click to upgrade</string>
+    <string name="android_auto_update_notify_content">Find new version, click to upgrade</string>
+
+    <string name="android_auto_update_dialog_btn_download">download immediately</string>
+    <string name="android_auto_update_dialog_btn_cancel">talk about it later</string>
+
+    <string name="android_auto_update_toast_no_new_update">Already the latest version</string>
+
+    <string name="android_auto_update_download_progress">Downloading:%1$d%%</string>
+
+    <string name="android_auto_update_dialog_checking">Checking version</string>
+</resources>

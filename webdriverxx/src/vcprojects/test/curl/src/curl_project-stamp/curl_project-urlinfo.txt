@@ -1,3 +1,0 @@
-repository='external project URL'
-module='http://curl.haxx.se/download/curl-7.55.0.tar.gz'
-tag=''

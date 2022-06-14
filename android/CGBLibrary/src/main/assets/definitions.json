@@ -1,0 +1,1315 @@
+[
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "😁"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "😅"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "🥰"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "😳"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "🥺"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_INPUT_COMMENT",
+          "selected": false,
+          "text": "Add comment..."
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_ADD_COMMENT"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.LinearLayout",
+            "clickable": false,
+            "contentDescription": "Choose an Account",
+            "selected": false,
+            "text": "null",
+            "viewIdResName": "com.google.android.gms:id/credential_picker_layout"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Continue with",
+            "viewIdResName": "com.google.android.gms:id/credentials_hint_picker_title"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.Button",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "NONE OF THE ABOVE",
+            "viewIdResName": "com.google.android.gms:id/cancel"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.Button",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_CANCEL",
+          "selected": false,
+          "text": "NONE OF THE ABOVE",
+          "viewIdResName": "com.google.android.gms:id/cancel"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_CHOOSE_ACCOUNT"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Following"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": true,
+            "text": "For You"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_FOLLING",
+          "selected": false,
+          "text": "Following"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_FOR_YOU",
+          "selected": true,
+          "text": "For You"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_HOME",
+          "selected": false,
+          "text": "Home"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_DISCOVER",
+          "selected": false,
+          "text": "Discover"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_INBOX",
+          "selected": false,
+          "text": "Inbox"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_PROFILE",
+          "selected": false,
+          "text": "Profile"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_HOME_FOR_YOU"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Following"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": true,
+            "text": "For You"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Home"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Discover"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Inbox"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Me"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Swipe up for more"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": []
+    },
+    "page": "SCREEN_TIKTOK_HOME_FOR_YOU_SWIPE_UP"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Log in"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Phone"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": true,
+            "text": "Email / Username"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_EDT_EMAIL_USERNAME",
+          "selected": false,
+          "text": "Email or Username"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_EDT_PASSWORD",
+          "selected": false,
+          "text": "Password"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_LOGIN",
+          "selected": false,
+          "text": "Log in"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_TO_MANY_ATTEMPTS_ITEM",
+          "selected": false,
+          "text": "Too many attempts. Try again later."
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_WRONG_PASSWORD_ITEM",
+          "selected": false,
+          "text": "Wrong account or password"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_LOGIN_TAB_EMAIL"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Log in"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": true,
+            "text": "Phone"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Email / Username"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_TAB_EMAIL_USERNAME",
+          "selected": false,
+          "text": "Email / Username"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_LOGIN_TAB_PHONE"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Log in to TikTok"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_LOGIN_EMAIL",
+          "selected": false,
+          "text": "Use phone / email / username"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_LOGIN_TO_TIKTOK"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Following"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Followers"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Like"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Edit profile"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Home"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Discover"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Inbox"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Me"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": []
+    },
+    "page": "SCREEN_TIKTOK_ME"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Profile"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up for an account"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Home"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Discover"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Inbox"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Me"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_SIGN_UP",
+          "selected": false,
+          "text": "Sign up"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_HOME",
+          "selected": false,
+          "text": "Home"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_DISCOVER",
+          "selected": false,
+          "text": "Discover"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_INBOX",
+          "selected": false,
+          "text": "Inbox"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_ME",
+          "selected": false,
+          "text": "Me"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_ME_SIGN_UP"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Following"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.ListView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": ""
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Followers"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Likes"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.Button",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_FOLLOW",
+          "selected": false,
+          "text": "Follow"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_PROFILE"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.view.View",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "The best experience is on the app"
+          },
+          {
+            "checked": false,
+            "className": "android.view.View",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Create a profile, follow other accounts, make your own videos, and more."
+          },
+          {
+            "checked": false,
+            "className": "android.widget.Button",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Open TikTok"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.view.View",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_CLOSE",
+          "selected": false,
+          "text": ""
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_PROFILE_INTRODUCE"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "When’s your birthday?"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Your birthday won't be shown publicly."
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Next"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_NEXT_BTN",
+          "selected": false,
+          "text": "Next"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BIRTHDAY_INTRODUCE",
+          "selected": false,
+          "text": "Your birthday won't be shown publicly."
+        },
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_ENTER_BIRTHDAY_FIELD",
+          "selected": false,
+          "text": "Birthday"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_NEXT_BTN",
+          "selected": false,
+          "text": "Next"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_BIRTHDAY"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.ImageView",
+            "clickable": true,
+            "contentDescription": "Back",
+            "selected": false,
+            "text": "null"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Enter 6-digit code"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Resend code"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_RESEND_CODE",
+          "selected": false,
+          "text": "Resend code"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_CONFIRM_CODE"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Create username"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "You can always change this later."
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_INPUT_USERNAME",
+          "selected": false,
+          "text": "Username"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_SIGN_UP",
+          "selected": false,
+          "text": "Sign up"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_CREATE_USERNAME"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Phone"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": true,
+            "text": "Email"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_PHONE",
+          "selected": true,
+          "text": "Phone"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_EMAIL",
+          "selected": false,
+          "text": "Email"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_INPUT_EMAIL_FIELD",
+          "selected": false,
+          "text": "Email address"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_NEXT_BTN",
+          "selected": false,
+          "text": "Next"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_EMAIL"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up for TikTok"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Create a profile, follow other accounts, make your own videos, and more."
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Use phone or email"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Already have an account? Log in"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_USE_PHONE_OR_EMAIL",
+          "selected": false,
+          "text": "Use phone or email"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_LOGIN",
+          "selected": false,
+          "text": "Already have an account? Log in"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_FOR_TIKTOK"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Create password"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Your password must have:"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_ENTER_PASSWORD_FIELD",
+          "selected": false,
+          "text": "Enter password"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_NEXT_BTN",
+          "selected": false,
+          "text": "Next"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Sign up"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": true,
+            "text": "Phone"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Email"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_PHONE",
+          "selected": true,
+          "text": "Phone"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": false,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_EMAIL",
+          "selected": false,
+          "text": "Email"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_SIGN_UP_PHONE"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.webkit.WebView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "verify captcha"
+          },
+          {
+            "checked": false,
+            "className": "android.app.Dialog",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": ""
+          },
+          {
+            "checked": false,
+            "className": "android.widget.Button",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Close"
+          },
+          {
+            "checked": false,
+            "className": "android.view.View",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Verification:"
+          }
+        ],
+        [
+          {
+            "checked": false,
+            "className": "android.webkit.WebView",
+            "clickable": false,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "verify captcha"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.Button",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Close"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.view.View",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_REFESH_BTN",
+          "selected": false,
+          "text": "Refresh"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_VERIFY_CAPTCHA"
+  },
+  {
+    "appname": "Tiktok",
+    "definitons": {
+      "English": [
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Share"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.EditText",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Add comment..."
+          }
+        ],
+        [
+          {
+            "checked": false,
+            "className": "android.widget.TextView",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Share"
+          },
+          {
+            "checked": false,
+            "className": "android.widget.EditText",
+            "clickable": true,
+            "contentDescription": "null",
+            "selected": false,
+            "text": "Comments are turned off"
+          }
+        ]
+      ]
+    },
+    "keywords": {
+      "English": [
+        {
+          "checked": false,
+          "className": "android.widget.TextView",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_BTN_SHARE",
+          "selected": false,
+          "text": "Share"
+        },
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_INPUT_COMMENT",
+          "selected": false,
+          "text": "Add comment..."
+        },
+        {
+          "checked": false,
+          "className": "android.widget.EditText",
+          "clickable": true,
+          "contentDescription": "null",
+          "keyword": "ID_TURNED_OFF_COMMENT",
+          "selected": false,
+          "text": "Comments are turned off"
+        }
+      ]
+    },
+    "page": "SCREEN_TIKTOK_VIDEO_DETAILS"
+  }
+]
