@@ -311,7 +311,7 @@ void ChromeService::initChromeDriver()
     std::vector<std::string> args;
     args.push_back("--user-data-dir=" + serviceData()->profilePath().toStdString());
     args.push_back("--ignore-certificate-errors");
-    //    args.push_back("--proxy-server=" + serviceData()->getProxy()->toString());
+    //    args.push_back("--proxy-server=149.19.224.31:3128");
     //    args.push_back("--disable-features=ChromeWhatsNewUI");
     //    args.push_back("--headless");
 
@@ -323,7 +323,7 @@ void ChromeService::initChromeDriver()
     //    args.push_back("--disable-dev-shm-usage");
     args.push_back("--disable-blink-features=AutomationControlled");
     //    args.push_back("--disable-infobars'");
-    args.push_back("--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36");
+    args.push_back("--user-agent=" + serviceData()->cloneInfo()->userAgent().toStdString());
 #if 0
     if(serviceData()->cloneInfo()->userAgent().isEmpty()) {
         serviceData()->cloneInfo()->setUserAgent(getRandomUserAgent());
@@ -378,7 +378,7 @@ void ChromeService::initChromeDriver()
     params.Set("source", "Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 1 })");
     driver->ExecuteCdpCommand("Page.addScriptToEvaluateOnNewDocument", params);
 
-    params.Set("userAgent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36");
+    params.Set("userAgent", serviceData()->cloneInfo()->userAgent().toStdString());
     driver->ExecuteCdpCommand("Network.setUserAgentOverride", params);
 
     params.Set("source", "\
@@ -464,6 +464,18 @@ void ChromeService::getClone()
             if(serviceData()->cloneInfo()) {
                 serviceData()->cloneInfo()->setStatus(CLONE_ALIVE_STATUS_STORE);
             }
+        }
+    }
+}
+
+void ChromeService::getCloneInfo()
+{
+    QJsonObject retval = DBPApi::instance()->getCloneInfo(serviceData()->cloneInfo()->username());
+    if(retval["success"].toBool()) {
+        QJsonObject cloneinfo = retval["clone_info"].toObject();
+        if(!cloneinfo.isEmpty() && cloneinfo != serviceData()->cloneInfo()->toJson()) {
+            serviceData()->setCloneInfo(new CloneInfo(cloneinfo));
+            emit serviceData()->cloneInfo()->cloneInfoChanged();
         }
     }
 }
@@ -597,6 +609,7 @@ void ChromeService::onMainProcess()
         if(serviceData()->cloneInfo() == nullptr) {
             getClone();
         } else {
+            getCloneInfo();
             if(m_drive == nullptr) {
                 initChromeDriver();
             } else {
@@ -611,7 +624,7 @@ void ChromeService::onMainProcess()
                         login();
                     } else {
                         feedLike();
-                        feedComment();
+//                        feedComment();
                         long lastUploadTime = serviceData()->cloneInfo()->lastUploadTime();
                         qint64 currentTime = QDateTime::currentMSecsSinceEpoch ();
                         if(currentTime - lastUploadTime > (4 * 60 * 60 * 1000)) {

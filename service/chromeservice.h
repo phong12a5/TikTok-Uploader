@@ -22,6 +22,7 @@ private:
     void initChromeDriver();
     void getProxy();
     void getClone();
+    void getCloneInfo();
     void getActions();
 
     void login();

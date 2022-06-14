@@ -61,6 +61,11 @@ QString CloneInfo::videoFolderPath()
     return m_cloneInfo.value(CLONE_INFO_FIELD_VIDEO_FOLDER_PATH).toString();
 }
 
+QString CloneInfo::userAgent()
+{
+    return m_cloneInfo.value(CLONE_INFO_FIELD_USERAGENT).toString();
+}
+
 QString CloneInfo::status()
 {
     return m_cloneInfo.value(CLONE_INFO_FIELD_STATUS).toString();

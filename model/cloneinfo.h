@@ -11,6 +11,7 @@
 #define CLONE_INFO_FIELD_LAST_UPLOAD_TIME "last_upload_time"
 #define CLONE_INFO_FIELD_CLONED_FROM "cloned_from"
 #define CLONE_INFO_FIELD_VIDEO_FOLDER_PATH "video_path"
+#define CLONE_INFO_FIELD_USERAGENT "useragent"
 
 
 #define CLONE_ALIVE_STATUS_LIVE        "live"
@@ -44,6 +45,8 @@ public:
     QString clonedFrome();
 
     QString videoFolderPath();
+
+    QString userAgent();
 
     QJsonObject toJson();
     QString toString();
