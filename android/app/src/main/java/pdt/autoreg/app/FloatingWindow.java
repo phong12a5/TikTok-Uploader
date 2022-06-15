@@ -27,7 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-import pdt.autoreg.cgblibrary.LOG;
+import pdt.autoreg.accessibility.LOG;
 
 public class FloatingWindow extends Service {
     final static String TAG = "FloatingWindow";

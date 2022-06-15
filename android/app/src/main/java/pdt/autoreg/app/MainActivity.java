@@ -1,7 +1,6 @@
 package pdt.autoreg.app;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -21,10 +20,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import pdt.autoreg.cgblibrary.services.ApiAccessibilityService;
-import pdt.autoreg.cgblibrary.CGBInterface;
-import pdt.autoreg.cgblibrary.LOG;
-import pdt.autoreg.devicefaker.FakerInterface;
+import pdt.autoreg.accessibility.ASInterface;
+import pdt.autoreg.app.services.TiktokAppService;
+import pdt.autoreg.accessibility.services.ApiAccessibilityService;
+import pdt.autoreg.accessibility.ASInterface;
+import pdt.autoreg.accessibility.LOG;
+import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -86,22 +87,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnStartStop.setText(AppModel.instance().isServiceStarted()? "Stop" : "Start");
-
-        /* -------------- Do request permission -------------- */
-        try {
-            if (hasPermissions(this, PERMISSIONS) == false) {
-                for (String permission : PERMISSIONS) {
-                    TiktokAppService.acceptPermission(permission, this.getPackageName());
-                }
-            }
-        } catch (Exception e) {}
-
-        if (FakerInterface.isRootAccess()) {
-            if (!ApiAccessibilityService.isAccessibilitySettingsOn(this)) {
-                String cmd = "settings put secure enabled_accessibility_services %accessibility:" + getPackageName() + "/" + ApiAccessibilityService.class.getCanonicalName();
-                FakerInterface.rootExecute(cmd);
-            }
-        }
     }
 
     @Override
@@ -162,22 +147,28 @@ public class MainActivity extends AppCompatActivity {
          * CGBInterface has to be initialized when start new mission
          */
         /* Always check accessibility permission when app is resumed*/
-        if (FakerInterface.isRootAccess()) {
-            if (!ApiAccessibilityService.isAccessibilitySettingsOn(this)) {
-                String cmd = "settings put secure enabled_accessibility_services %accessibility:" + getPackageName() + "/" + ApiAccessibilityService.class.getCanonicalName();
-                FakerInterface.rootExecute(cmd);
-            } else {
-                if (Settings.canDrawOverlays(this)) {
-                    startService(new Intent(MainActivity.this, FloatingWindow.class));
-
-                    if (!AppModel.instance().isServiceStarted()) {
-                        startService(new Intent(MainActivity.this, TiktokAppService.class));
-                    }
-                    btnStartStop.setText("Stop");
-                } else {
-                    TiktokAppService.acceptPermission("android.permission.SYSTEM_ALERT_WINDOW", this.getPackageName());
+        if (RootHelper.isRootAccess()) {
+            if (hasPermissions(this, PERMISSIONS) == false) {
+                for (String permission : PERMISSIONS) {
+                    RootHelper.acceptPermission(permission, this.getPackageName());
                 }
             }
+
+            if (!ASInterface.isAccessibilitySettingsOn(this)) {
+                String cmd = "settings put secure enabled_accessibility_services %accessibility:" + getPackageName() + "/" + ApiAccessibilityService.class.getCanonicalName();
+                RootHelper.execute(cmd);
+            }
+
+            if (!Settings.canDrawOverlays(this)) {
+                RootHelper.acceptPermission("android.permission.SYSTEM_ALERT_WINDOW", this.getPackageName());
+            }
+
+            startService(new Intent(MainActivity.this, FloatingWindow.class));
+
+            if (!AppModel.instance().isServiceStarted()) {
+                startService(new Intent(MainActivity.this, TiktokAppService.class));
+            }
+            btnStartStop.setText("Stop");
         } else {
             Toast.makeText(this, "Root Access required.", Toast.LENGTH_SHORT).show();
         }

@@ -18,8 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import pdt.autoreg.cgblibrary.CGBInterface;
-import pdt.autoreg.cgblibrary.LOG;
+import pdt.autoreg.accessibility.ASInterface;
+import pdt.autoreg.accessibility.ASInterface;
+import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.devicefaker.Constants;
 
 public class App extends Application {
@@ -82,7 +83,7 @@ public class App extends Application {
     public static void initApplication(Context context) {
         LOG.D(TAG,"initApplicatione");
 
-        CGBInterface.getInstance().init(context);
+        ASInterface.instance().init(context);
 
         /* ------------- tạo thư mục /sdcard/pdt.autoreg.app ------------------------------- */
         File afFolder = new File(AppDefines.AUTOREG_FOLDER);

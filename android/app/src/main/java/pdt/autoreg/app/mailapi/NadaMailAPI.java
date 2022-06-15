@@ -1,4 +1,4 @@
-package pdt.autoreg.app;
+package pdt.autoreg.app.mailapi;
 
 import android.util.Log;
 
@@ -16,7 +16,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import pdt.autoreg.cgblibrary.LOG;
+import pdt.autoreg.accessibility.LOG;
 
 public class NadaMailAPI {
     private static String TAG = "NadaMailAPI";

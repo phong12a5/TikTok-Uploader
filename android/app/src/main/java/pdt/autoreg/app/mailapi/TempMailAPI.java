@@ -1,4 +1,4 @@
-package pdt.autoreg.app;
+package pdt.autoreg.app.mailapi;
 
 import android.util.Log;
 
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import pdt.autoreg.cgblibrary.LOG;
+import pdt.autoreg.accessibility.LOG;
 
 public class TempMailAPI {
     private static String TAG = "TempMailAPI";

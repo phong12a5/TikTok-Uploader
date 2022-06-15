@@ -1,10 +1,10 @@
-package pdt.autoreg.app;
+package pdt.autoreg.app.api;
 
 import com.chilkatsoft.CkJsonObject;
 import com.chilkatsoft.CkRest;
 import com.chilkatsoft.CkStream;
 
-import pdt.autoreg.cgblibrary.LOG;
+import pdt.autoreg.accessibility.LOG;
 
 public class DropboxAPI {
     private static final String TAG = "DropboxAPI";

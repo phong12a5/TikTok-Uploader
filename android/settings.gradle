@@ -1,1 +1,1 @@
-include ':app',':DeviceFaker', ':CGBLibrary', ':transformations'
+include ':app',':accessibility', ':DeviceFaker'

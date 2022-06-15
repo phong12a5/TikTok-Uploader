@@ -49,7 +49,7 @@
             android:value="53" />
 
         <service
-            android:name="pdt.autoreg.app.TiktokAppService"
+            android:name="pdt.autoreg.app.services.TiktokAppService"
             android:enabled="true"
             android:exported="true"></service>
         <service

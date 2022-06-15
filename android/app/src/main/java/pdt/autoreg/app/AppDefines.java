@@ -53,15 +53,6 @@ public class AppDefines {
     public static final String AUTOREG_DATA_FOLDER = AUTOREG_FOLDER + "data/";
     public static final String PICTURES_FOLDER = Environment.getExternalStorageDirectory() + "/Pictures/";
 
-    public static final String PROXY_PROTOCOL_HTTP = "http";
-    public static final String PROXY_PROTOCOL_HTTPS = "https";
-    public static final String PROXY_PROTOCOL_SOCKS4 = "socks4";
-    public static final String PROXY_PROTOCOL_SOCKS5 = "socks5";
-
-    static final String CMD_IPTABLES_REDIRECT_ADD_HTTP = "/system/bin/iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to 8123\niptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to 8124\niptables -t nat -A OUTPUT -p tcp --dport 5228 -j REDIRECT --to 8124\n";
-    static final String CMD_IPTABLES_REDIRECT_ADD_HTTP_TUNNEL = "/system/bin/iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to 8123\niptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to 8123\niptables -t nat -A OUTPUT -p tcp --dport 5228 -j REDIRECT --to 8123\n";
-    static final String CMD_IPTABLES_REDIRECT_ADD_SOCKS = "/system/bin/iptables -t nat -A OUTPUT -p tcp -j REDIRECT --to 8123\n";
-
     /************************************* PAGE_ID ************************************/
 
     /******************** TIKTOK APP ********************/

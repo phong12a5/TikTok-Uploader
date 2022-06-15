@@ -1,17 +1,12 @@
 package pdt.autoreg.app;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.media.AudioManager;
 import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 
-import pdt.autoreg.cgblibrary.LOG;
-import pdt.autoreg.devicefaker.VDRoot;
-
-import static android.content.ContentValues.TAG;
+import pdt.autoreg.accessibility.LOG;
+import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public class VolumeObserver extends ContentObserver {
 
@@ -38,19 +33,9 @@ public class VolumeObserver extends ContentObserver {
             //
         } else if (currentVolume == audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) &&
                 volumeSave == currentVolume -1){
-            VDRoot.execute("am force-stop " + App.getContext().getPackageName());
+            RootHelper.execute("am force-stop " + App.getContext().getPackageName());
         }
 
         volumeSave = currentVolume;
-    }
-
-    void showToastMessage(String msg) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(App.getContext(), msg, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 }

@@ -1,5 +1,5 @@
 package pdt.autoreg.app;
-import pdt.autoreg.cgblibrary.LOG;
+import pdt.autoreg.accessibility.LOG;
 
 public class WorkerThread extends Thread {
     private static String TAG = "WorkerThread";

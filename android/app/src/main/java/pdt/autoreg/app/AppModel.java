@@ -14,8 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import pdt.autoreg.cgblibrary.LOG;
-import pdt.autoreg.cgblibrary.screendefinitions.ScreenNode;
+import pdt.autoreg.accessibility.LOG;
+import pdt.autoreg.accessibility.screendefinitions.ScreenNode;
 
 public class AppModel {
     private static AppModel model = null;
@@ -34,8 +34,8 @@ public class AppModel {
     private JSONArray phonePrefixList = null;
     private int m_networkType = AppDefines.MOBILE_NETWORK;
     private SharedPreferences m_prefs = null;
-    private String m_currSreenID = null;
-    private List<ScreenNode> m_currentScreenInfo = new ArrayList<>();
+    private String m_currSrcID = null;
+    private List<ScreenNode> m_currScrInfo = new ArrayList<>();
 
     private AppModel() {
         m_prefs = App.getContext().getSharedPreferences(AppDefines.PDT_PREFS_NAME, MODE_PRIVATE);
@@ -49,15 +49,6 @@ public class AppModel {
         }
         return model;
     }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
 
     public String getImei() {
         return imei;
@@ -85,20 +76,20 @@ public class AppModel {
         editor.apply();
     }
 
-    public String getCurrentScreenID() {
-        return m_currSreenID;
+    public String currScrID() {
+        return m_currSrcID;
     }
 
-    public void setCurrentScreenID(String screenID) {
-        m_currSreenID = screenID;
+    public void setCurrScrID(String screenID) {
+        m_currSrcID = screenID;
     }
 
-    public List<ScreenNode> getCurrentScreenInfo() {
-        return m_currentScreenInfo;
+    public List<ScreenNode> currScrInfo() {
+        return m_currScrInfo;
     }
 
-    public void setCurrentScreenInfo(List<ScreenNode> info) {
-        m_currentScreenInfo = info;
+    public void setCurrtScrInfo(List<ScreenNode> info) {
+        m_currScrInfo = info;
     }
 
     public boolean isServiceStarted() {

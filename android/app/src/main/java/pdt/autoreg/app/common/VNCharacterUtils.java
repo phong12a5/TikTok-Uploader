@@ -1,4 +1,4 @@
-package pdt.autoreg.app;
+package pdt.autoreg.app.common;
 
 import java.text.Normalizer;
 import java.util.regex.Pattern;
