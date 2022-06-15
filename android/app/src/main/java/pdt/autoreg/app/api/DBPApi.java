@@ -27,6 +27,29 @@ public class DBPApi {
         return sInstance;
     }
 
+    public JSONObject getClone() {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("api", "get_clone");
+            return sendRequest(body);
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
+            return null;
+        }
+    }
+
+    public JSONObject getCloneInfo(String username) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("api", "get_clone_info");
+            body.put("username", username);
+            return sendRequest(body);
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
+            return null;
+        }
+    }
+
     public JSONObject updateCloneInfo(CloneInfo cloneInfo) {
         if(cloneInfo == null) {
             LOG.E(TAG, "updateCloneInfo: rejected (reason: cloneInfo is null)");
@@ -36,6 +59,31 @@ public class DBPApi {
             JSONObject body = new JSONObject();
             body.put("api", "update_clone_info");
             body.put("clone_info", cloneInfo);
+            return sendRequest(body);
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
+            return null;
+        }
+    }
+
+    public JSONObject getVideoPath(String author) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("api", "get_video_path");
+            body.put("author", author);
+            return sendRequest(body);
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
+            return null;
+        }
+    }
+
+    public JSONObject updateVideoStatus(String video_id, String status) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("api", "update_video_status");
+            body.put("video_id", video_id);
+            body.put("status", status);
             return sendRequest(body);
         } catch (Exception e) {
             LOG.printStackTrace(TAG, e);
