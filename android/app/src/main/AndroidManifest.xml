@@ -52,10 +52,8 @@
             android:name="pdt.autoreg.app.services.TiktokAppService"
             android:enabled="true"
             android:exported="true"></service>
-        <service
-            android:name=".FloatingWindow"></service>
 
-        <activity android:name="pdt.autoreg.app.MainActivity">
+        <activity android:name="pdt.autoreg.app.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

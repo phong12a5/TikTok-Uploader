@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 
 import com.chilkatsoft.CkGlobal;
 
@@ -21,7 +22,9 @@ import java.io.OutputStream;
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
+import pdt.autoreg.app.common.Utils;
 import pdt.autoreg.devicefaker.Constants;
+import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public class App extends Application {
     private static String TAG = "AutofarmerApp";
@@ -52,6 +55,7 @@ public class App extends Application {
         sApplication = this;
         unlockChilkat();
         initApplication(this);
+        copyProxyTools(getContext());
 
         volumeObserver = new VolumeObserver(handler);
         getContentResolver().registerContentObserver(
@@ -83,73 +87,27 @@ public class App extends Application {
     public static void initApplication(Context context) {
         LOG.D(TAG,"initApplicatione");
 
+        if(RootHelper.isRootAccess()) {
+            Utils.showToastMessage(App.getContext(), "Root Access required.");
+            System.exit(1);
+        }
+
         ASInterface.instance().init(context);
 
-        /* ------------- tạo thư mục /sdcard/pdt.autoreg.app ------------------------------- */
-        File afFolder = new File(AppDefines.AUTOREG_FOLDER);
-        if (!afFolder.exists()) {
-            if (afFolder.mkdir()) ; //directory is created;
+        File fPdtFolder = new File(AppDefines.PDT_FOLDER);
+        if (!fPdtFolder.exists()) {
+            RootHelper.execute("mkdir " + AppDefines.PDT_FOLDER);
         }
 
-        File afDataFolder = new File(AppDefines.AUTOREG_DATA_FOLDER);
-        if (!afDataFolder.exists()) {
-            if (afDataFolder.mkdir()) ; //directory is created;
+        File fPdtDataFolder = new File(AppDefines.PDT_DATA_FOLDER);
+        if (!fPdtDataFolder.exists()) {
+            RootHelper.execute("mkdir " + AppDefines.PDT_DATA_FOLDER);
         }
-
-        copyProxyTools(getContext());
     }
 
     private static void copyProxyTools(Context context) {
         LOG.D(TAG, "copyProxyTools");
-        copyAssetFolder(context.getAssets(), "proxy/" + Build.CPU_ABI,context.getFilesDir().getAbsolutePath());
-    }
-
-
-
-    private static boolean copyAssetFolder(AssetManager assetManager,
-                                           String fromAssetPath, String toPath) {
-        try {
-            String[] files = assetManager.list(fromAssetPath);
-            new File(toPath).mkdirs();
-            boolean res = true;
-            for (String file : files)
-                res &= copyAsset(assetManager,
-                        fromAssetPath + "/" + file,
-                        toPath + "/" + file);
-            return res;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private static boolean copyAsset(AssetManager assetManager,
-                                     String fromAssetPath, String toPath) {
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = assetManager.open(fromAssetPath);
-            new File(toPath).createNewFile();
-            out = new FileOutputStream(toPath);
-            copyFile(in, out);
-            in.close();
-            in = null;
-            out.flush();
-            out.close();
-            out = null;
-            return true;
-        } catch(Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private static void copyFile(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int read;
-        while((read = in.read(buffer)) != -1){
-            out.write(buffer, 0, read);
-        }
+        Utils.copyAssetFolder(context.getAssets(), "proxy/" + Build.CPU_ABI,context.getFilesDir().getAbsolutePath());
     }
 
     public static boolean unlockChilkat() {

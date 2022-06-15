@@ -205,26 +205,4 @@ public class ProxyHelper {
             return null;
         }
     }
-
-    protected static void saveImageToExternal(String imgNamePath, Bitmap bm) {
-        LOG.D(TAG, "saveImageToExternal: " + imgNamePath);
-        try{
-            File imageFile = new File(imgNamePath); // Imagename.png
-            FileOutputStream out = new FileOutputStream(imageFile);
-            bm.compress(Bitmap.CompressFormat.PNG, 100, out); // Compress Image
-            out.flush();
-            out.close();
-
-            // Tell the media scanner about the new file so that it is
-            // immediately available to the user.
-            MediaScannerConnection.scanFile(App.getContext(),new String[] { imageFile.getAbsolutePath() }, null,new MediaScannerConnection.OnScanCompletedListener() {
-                public void onScanCompleted(String path, Uri uri) {
-                    LOG.I(TAG, "ExternalStorage Scanned " + path + ":");
-                    LOG.I(TAG, "ExternalStorage -> uri=" + uri);
-                }
-            });
-        } catch(Exception e) {
-            LOG.E(TAG,"saveImageToExternal: " + e);
-        }
-    }
 }

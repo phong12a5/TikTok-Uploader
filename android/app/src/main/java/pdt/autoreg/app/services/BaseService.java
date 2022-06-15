@@ -9,16 +9,19 @@ import android.os.RemoteException;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.accessibility.screendefinitions.ScreenInfo;
 import pdt.autoreg.app.AppDefines;
-import pdt.autoreg.app.AppModel;
+import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.BuildConfig;
 import pdt.autoreg.app.WorkerThread;
 import pdt.autoreg.app.common.Utils;
+import pdt.autoreg.app.model.PackageInfo;
+import pdt.autoreg.devicefaker.Constants;
 import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public abstract class BaseService extends Service {
@@ -87,7 +90,32 @@ public abstract class BaseService extends Service {
                         m_time_to_update = 0;
                     } else {
                         m_time_to_update++;
-                        mainOperations();
+                        if(AppModel.instance().currPackage() == null) {
+                            changePackage();
+                        } else {
+                            // detect screen
+                            detectScreen(true);
+
+                            // check screen lopp
+                            String mostAppearsElement = null;
+                            int maxAppearCount = 0;
+                            for (int i = 0; i < m_screenStack.size(); i++) {
+                                String item = m_screenStack.get(i);
+                                int occurrences = Collections.frequency(m_screenStack, m_screenStack.get(i));
+                                if (occurrences > maxAppearCount) {
+                                    mostAppearsElement = item;
+                                    maxAppearCount = occurrences;
+                                }
+                            }
+
+                            int threshold = AppDefines.SCREEN_STACK_SIZE / 2;
+                            if (maxAppearCount >= threshold) {
+                                LOG.E(TAG, "Loop issue: " + mostAppearsElement + " appears: " + maxAppearCount);
+                                changePackage();
+                            } else {
+                                mainOperations();
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     LOG.printStackTrace(TAG, e);
@@ -97,6 +125,36 @@ public abstract class BaseService extends Service {
             LOG.D(TAG, "*********************************** End cycle *********************************** ");
         }
     };
+
+    protected void changePackage() {
+        int nextPkgId = (AppModel.instance().currPackage() == null || (AppModel.instance().currPackage().getPackageId() + 1) >= AppDefines.MAX_PACKAGE_NUM)? 0 : AppModel.instance().currPackage().getPackageId() + 1;
+
+        if(AppModel.instance().currPackage() != null) {
+            RootHelper.closePackage(AppModel.instance().currPackage().getPackageName());
+            if(!changeIp()) {
+                LOG.E(TAG, "change ip failed!");
+                return;
+            }
+        }
+
+        AppModel.instance().setCurrPackage(new PackageInfo(nextPkgId, Constants.REG_PACKAGE));
+
+        // clear screen stack
+        if (m_screenStack != null && !m_screenStack.isEmpty()) {
+            m_screenStack.clear();
+        }
+
+        //open package
+        try {
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(AppModel.instance().currPackage().getPackageName());
+            launchIntent.setFlags(launchIntent.getFlags() | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_FROM_BACKGROUND);
+            Utils.showToastMessage(this, "Start " + AppModel.instance().currPackage().getPackageName() + ": " + AppModel.instance().currPackage().getPackageId() );
+            startActivity(launchIntent);
+            Utils.delay(5000);
+        } catch (Exception e) {
+            Utils.showToastMessage(this, "Start " + AppModel.instance().currPackage().getPackageName() + " failed!");
+        }
+    }
 
     private void updateKeywordDefinitions() {
         String content = "";
@@ -147,6 +205,28 @@ public abstract class BaseService extends Service {
         }
         return false;
         /* ------------- END Detect screen ------------- */
+    }
+
+    private boolean changeIp() {
+        boolean success = false;
+        switch (AppModel.instance().networkType()) {
+            case AppDefines.MOBILE_NETWORK:
+                RootHelper.enableAirplane();
+                Utils.delay(1000);
+                RootHelper.disableAirplane();
+                Utils.delay(5000);
+                success = true;
+                break;
+            case AppDefines.PROXY_NETWORK:
+                break;
+            case AppDefines.SSHTUNNEL_NETWORK:
+                break;
+            default:
+                break;
+        }
+
+        Utils.showToastMessage(this, "public ip: " + Utils.getPuclicIP());
+        return success;
     }
 
     private void checkAndUpdateNewVerion() {

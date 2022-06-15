@@ -1,4 +1,4 @@
-package pdt.autoreg.app;
+package pdt.autoreg.app.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,9 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import pdt.autoreg.accessibility.ASInterface;
+import pdt.autoreg.app.App;
+import pdt.autoreg.app.R;
+import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.services.TiktokAppService;
 import pdt.autoreg.accessibility.services.ApiAccessibilityService;
-import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.devicefaker.helper.RootHelper;
 
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         txtVersion =  (TextView) findViewById(R.id.version);
         try {
-            PackageInfo pInfo = App.getContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             txtVersion.setText("Version: " + pInfo.versionName);
         }catch (PackageManager.NameNotFoundException e) { }
 
@@ -147,31 +149,26 @@ public class MainActivity extends AppCompatActivity {
          * CGBInterface has to be initialized when start new mission
          */
         /* Always check accessibility permission when app is resumed*/
-        if (RootHelper.isRootAccess()) {
-            if (hasPermissions(this, PERMISSIONS) == false) {
-                for (String permission : PERMISSIONS) {
-                    RootHelper.acceptPermission(permission, this.getPackageName());
-                }
+        if (hasPermissions(this, PERMISSIONS) == false) {
+            for (String permission : PERMISSIONS) {
+                RootHelper.acceptPermission(permission, this.getPackageName());
             }
-
-            if (!ASInterface.isAccessibilitySettingsOn(this)) {
-                String cmd = "settings put secure enabled_accessibility_services %accessibility:" + getPackageName() + "/" + ApiAccessibilityService.class.getCanonicalName();
-                RootHelper.execute(cmd);
-            }
-
-            if (!Settings.canDrawOverlays(this)) {
-                RootHelper.acceptPermission("android.permission.SYSTEM_ALERT_WINDOW", this.getPackageName());
-            }
-
-            startService(new Intent(MainActivity.this, FloatingWindow.class));
-
-            if (!AppModel.instance().isServiceStarted()) {
-                startService(new Intent(MainActivity.this, TiktokAppService.class));
-            }
-            btnStartStop.setText("Stop");
-        } else {
-            Toast.makeText(this, "Root Access required.", Toast.LENGTH_SHORT).show();
         }
+
+        if (!ASInterface.isAccessibilitySettingsOn(this)) {
+            String cmd = "settings put secure enabled_accessibility_services %accessibility:" + getPackageName() + "/" + ApiAccessibilityService.class.getCanonicalName();
+            RootHelper.execute(cmd);
+        }
+
+        if (!Settings.canDrawOverlays(this)) {
+            RootHelper.acceptPermission("android.permission.SYSTEM_ALERT_WINDOW", this.getPackageName());
+        }
+
+        if (!AppModel.instance().isServiceStarted()) {
+            startService(new Intent(MainActivity.this, TiktokAppService.class));
+        }
+        btnStartStop.setText("Stop");
+
     }
 
     private void stopMission() {

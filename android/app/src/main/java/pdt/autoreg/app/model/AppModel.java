@@ -1,41 +1,33 @@
-package pdt.autoreg.app;
+package pdt.autoreg.app.model;
 
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.accessibility.screendefinitions.ScreenNode;
+import pdt.autoreg.app.App;
+import pdt.autoreg.app.AppDefines;
 
 public class AppModel {
     private static AppModel model = null;
     private String TAG = "AppModel";
 
     /* Properites */
-    private String deviceName = "";
-    private String appName = "";
     private String imei = "";
     private String androidID = "";
-    private boolean autoStart = false;
-    private JSONObject config = null;
-    private String machineID = "";
-    private String base = "Base";
     private boolean serviceStarted = false;
-    private JSONArray phonePrefixList = null;
     private int m_networkType = AppDefines.MOBILE_NETWORK;
     private SharedPreferences m_prefs = null;
     private String m_currSrcID = null;
     private List<ScreenNode> m_currScrInfo = new ArrayList<>();
+    private PackageInfo m_currPackage = null;
 
     private AppModel() {
         m_prefs = App.getContext().getSharedPreferences(AppDefines.PDT_PREFS_NAME, MODE_PRIVATE);
@@ -67,13 +59,21 @@ public class AppModel {
     }
 
     public int networkType() {
-        return m_prefs.getInt("netwok_type", AppDefines.MOBILE_NETWORK);
+        return m_prefs.getInt("netwok_type", AppDefines.PROXY_NETWORK);
     }
 
     public void setNetworkType(int data) {
         SharedPreferences.Editor editor = m_prefs.edit();
         editor.putInt("netwok_type", data);
         editor.apply();
+    }
+
+    public PackageInfo currPackage() {
+        return m_currPackage;
+    }
+
+    public void setCurrPackage(PackageInfo packageInfo) {
+        m_currPackage = packageInfo;
     }
 
     public String currScrID() {

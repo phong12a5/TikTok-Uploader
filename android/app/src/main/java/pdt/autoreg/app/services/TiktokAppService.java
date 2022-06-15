@@ -16,7 +16,7 @@ import java.util.Random;
 import pdt.autoreg.accessibility.ASUtils;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.app.AppDefines;
-import pdt.autoreg.app.AppModel;
+import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.common.Utils;
 import pdt.autoreg.app.helpers.ProxyHelper;
 import pdt.autoreg.devicefaker.helper.RootHelper;
@@ -24,14 +24,6 @@ import pdt.autoreg.devicefaker.Constants;
 
 public class TiktokAppService extends BaseService {
     private static String TAG = "TiktokAppService";
-
-    List<String> m_listFirstName = new ArrayList<>();
-    List<String> m_listLastName = new ArrayList<>();
-    List<JSONObject> m_listSSH = new ArrayList<>();
-    String m_country = AppDefines.COUNTRY_VIETNAM;
-    boolean resetPackage = true;
-    boolean useTempMailInsteadOf = false;
-    private JSONObject hotmailObj = null;
 
     @Override
     public void onCreate() {
@@ -57,30 +49,13 @@ public class TiktokAppService extends BaseService {
         LOG.D(TAG, "mainOperations");
         Utils.showToastMessage(this, "Start NEW CYCLE");
 
+        if(AppModel.instance().currPackage() == null) {
+            changePackage();
+        } else {
 
-    }
-
-    private boolean changeIp() {
-        boolean success = false;
-        switch (AppModel.instance().networkType()) {
-            case AppDefines.MOBILE_NETWORK:
-                RootHelper.enableAirplane();
-                Utils.delay(1000);
-                RootHelper.disableAirplane();
-                Utils.delay(5000);
-                success = true;
-                break;
-            case AppDefines.PROXY_NETWORK:
-                break;
-            case AppDefines.SSHTUNNEL_NETWORK:
-                break;
-            default:
-                break;
         }
-
-        Utils.showToastMessage(this, "public ip: " + Utils.getPuclicIP());
-        return success;
     }
+
     private void resetNetwork() {
         switch (AppModel.instance().networkType()) {
             case AppDefines.PROXY_NETWORK:

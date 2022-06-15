@@ -55,6 +55,10 @@ public class RootHelper {
         execute("pm clear " + packageName);
     }
 
+    public static void closePackage(String packageName) {
+        execute("am force-stop " + packageName);
+    }
+
     public static String execute(String command) {
         LOG.D(TAG, "command: " + command);
         String result = null;
