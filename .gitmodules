@@ -2,3 +2,6 @@
 	path = android/accessibility
 	url = https://github.com/phong12a5/accessibility.git
 	branch = master
+[submodule "android/accessibility"]
+	path = android/accessibility
+	url = https://github.com/phong12a5/accessibility.git
