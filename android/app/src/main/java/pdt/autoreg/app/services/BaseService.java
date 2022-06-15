@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 
 import org.apache.commons.io.FileUtils;
@@ -39,6 +41,7 @@ public abstract class BaseService extends Service {
     private static final int RATIO = 2000;
     private int m_time_to_update = 20;
     private int m_time_to_gc = 0;
+    protected int widthOfScreen = 0;
     protected int heightOfScreen = 0;
     protected List<String> m_screenStack = new ArrayList<String>();
 
@@ -48,6 +51,13 @@ public abstract class BaseService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        WindowManager wmgr = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics metrics = new DisplayMetrics();
+        wmgr.getDefaultDisplay().getRealMetrics(metrics);
+        widthOfScreen = metrics.widthPixels;
+        heightOfScreen = metrics.heightPixels;
+
         m_workerThread.startWorker();
         LOG.D(TAG, "Created " + this.getClass().getName());
     }
@@ -132,7 +142,7 @@ public abstract class BaseService extends Service {
                 } catch (Exception e) {
                     LOG.printStackTrace(TAG, e);
                 }
-                Utils.delay(RATIO);
+                Utils.delayRandom(RATIO - 1000, RATIO + 1000);
             }
             LOG.D(TAG, "*********************************** End cycle *********************************** ");
         }
@@ -194,6 +204,7 @@ public abstract class BaseService extends Service {
                     String tmp = "/sdcard/device_info.json";
                     FileUtils.writeStringToFile(new File(tmp), deviceObject.toString());
                     RootHelper.execute(String.format("cp %s %s", tmp, target));
+                    RootHelper.execute("chmod 777 " + target);
                 }
             } catch (Exception e) {
                 LOG.printStackTrace(TAG, e);

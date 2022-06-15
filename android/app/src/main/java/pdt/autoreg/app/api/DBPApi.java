@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import pdt.autoreg.app.model.CloneInfo;
 import pdt.autoreg.devicefaker.LOG;
@@ -93,6 +94,7 @@ public class DBPApi {
 
     private JSONObject sendRequest(JSONObject bodyJson) {
         OkHttpClient client = new OkHttpClient();
+        client.setProtocols(Arrays.asList(com.squareup.okhttp.Protocol.HTTP_1_1));
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, bodyJson.toString());
         Request request = new Request.Builder()

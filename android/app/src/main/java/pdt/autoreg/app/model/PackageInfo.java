@@ -14,6 +14,7 @@ public class PackageInfo {
     private int packageId = -1;
     private String packageName;
     private CloneInfo cloneInfo = null;
+    private boolean isVerifiedLogin = false;
 
     public PackageInfo(int packageId, String packageName) {
         this.packageId = packageId;
@@ -30,11 +31,15 @@ public class PackageInfo {
         return packageName;
     }
 
+    public boolean isVerifiedLogin() {return isVerifiedLogin; }
+
+    public void setIsVerifiedLogin(boolean status) { isVerifiedLogin = status; }
+
     public CloneInfo getCloneInfo() {
         return cloneInfo;
     }
 
-    void setCloneInfo(String cloneInfoJson) {
+    public void setCloneInfo(String cloneInfoJson) {
         try {
             this.cloneInfo = new CloneInfo(cloneInfoJson) {
                 @Override

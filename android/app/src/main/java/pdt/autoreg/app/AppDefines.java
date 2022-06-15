@@ -43,8 +43,15 @@ public class AppDefines {
     public static final String TIKTOK_APPNAME = "tiktok";
 
     /******************** TIKTOK APP ********************/
+    public static final String SCREEN_TIKTOK_AGREE_TOS = "SCREEN_TIKTOK_AGREE_TOS";
+    public static final String SCREEN_TIKTOK_CHOOSE_INTERESTS = "SCREEN_TIKTOK_CHOOSE_INTERESTS";
+    public static final String SCREEN_TIKTOK_SWIPE_UP = "SCREEN_TIKTOK_SWIPE_UP";
     public static final String SCREEN_TIKTOK_HOME_FOR_YOU = "SCREEN_TIKTOK_HOME_FOR_YOU";
+    public static final String SCREEN_TIKTOK_MY_PROFILE = "SCREEN_TIKTOK_MY_PROFILE";
     public static final String SCREEN_TIKTOK_SIGN_UP_FOR_TIKTOK = "SCREEN_TIKTOK_SIGN_UP_FOR_TIKTOK";
+    public static final String SCREEN_TIKTOK_LOGIN_TO_TIKTOK = "SCREEN_TIKTOK_LOGIN_TO_TIKTOK";
+    public static final String SCREEN_TIKTOK_LOGIN_TAB_PHONE = "SCREEN_TIKTOK_LOGIN_TAB_PHONE";
+    public static final String SCREEN_TIKTOK_LOGIN_TAB_EMAIL = "SCREEN_TIKTOK_LOGIN_TAB_EMAIL";
     public static final String SCREEN_TIKTOK_SIGN_UP_BIRTHDAY = "SCREEN_TIKTOK_SIGN_UP_BIRTHDAY";
     public static final String SCREEN_TIKTOK_SIGN_UP_PHONE = "SCREEN_TIKTOK_SIGN_UP_PHONE";
     public static final String SCREEN_TIKTOK_SIGN_UP_EMAIL = "SCREEN_TIKTOK_SIGN_UP_EMAIL";

@@ -6,6 +6,7 @@ import pdt.autoreg.accessibility.ASInterface;
 
 import com.squareup.okhttp.OkHttpClient;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.Random;
 import pdt.autoreg.accessibility.ASUtils;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.app.AppDefines;
+import pdt.autoreg.app.api.DBPApi;
 import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.common.Utils;
 import pdt.autoreg.app.helpers.ProxyHelper;
@@ -48,10 +50,61 @@ public class TiktokAppService extends BaseService {
         LOG.D(TAG, "mainOperations");
         Utils.showToastMessage(this, "Start NEW CYCLE");
 
-        if(AppModel.instance().currPackage() == null) {
-            changePackage();
-        } else {
+        try {
+            switch (AppModel.instance().currScrID()) {
+                case AppDefines.SCREEN_TIKTOK_AGREE_TOS:
+                    ASUtils.findAndClick("ID_AGREE_BTN", AppModel.instance().currScrInfo());
+                    break;
 
+                case AppDefines.SCREEN_TIKTOK_SIGN_UP_FOR_TIKTOK:
+                    ASUtils.findAndClick("ID_LOGIN", AppModel.instance().currScrInfo());
+                    break;
+                case AppDefines.SCREEN_TIKTOK_CHOOSE_INTERESTS:
+                    ASUtils.findAndClick("ID_SKIP_BTN", AppModel.instance().currScrInfo());
+                    break;
+                case AppDefines.SCREEN_TIKTOK_SWIPE_UP:
+                    ASUtils.findAndClick("ID_START_WATCHING_BTN", AppModel.instance().currScrInfo());
+                    break;
+                case AppDefines.SCREEN_TIKTOK_HOME_FOR_YOU:
+                    if(ASUtils.find("ID_BTN_SWIPE_FOR_MORE", AppModel.instance().currScrInfo(), false)) {
+                        ASInterface.instance().swipe(widthOfScreen/2, heightOfScreen - 100, widthOfScreen/2, 200, 400);
+                    } else if(AppModel.instance().currPackage().getCloneInfo() == null || !AppModel.instance().currPackage().isVerifiedLogin()) {
+                        ASUtils.findAndClick("ID_BTN_PROFILE", AppModel.instance().currScrInfo());
+                    }
+                    break;
+                case AppDefines.SCREEN_TIKTOK_LOGIN_TO_TIKTOK:
+                    ASUtils.findAndClick("ID_LOGIN_EMAIL", AppModel.instance().currScrInfo());
+                    break;
+                case AppDefines.SCREEN_TIKTOK_LOGIN_TAB_PHONE:
+                    ASUtils.findAndClick("ID_TAB_EMAIL_USERNAME", AppModel.instance().currScrInfo());
+                    break;
+                case AppDefines.SCREEN_TIKTOK_LOGIN_TAB_EMAIL:
+                    if(AppModel.instance().currPackage().getCloneInfo() == null) {
+                        getClone();
+                    } else {
+                        String username = AppModel.instance().currPackage().getCloneInfo().username();
+                        String password = AppModel.instance().currPackage().getCloneInfo().password();
+
+                        if(!ASUtils.findByTextOrDes(username, AppModel.instance().currScrInfo())) {
+                            if (ASUtils.findAndClick("ID_EDT_EMAIL_USERNAME", AppModel.instance().currScrInfo())) {
+                                Utils.delay(1000);
+                                ASInterface.instance().inputText(username, null, true);
+                            }
+                        } else {
+                            if (ASUtils.findAndClick("ID_EDT_PASSWORD", AppModel.instance().currScrInfo())) {
+                                Utils.delay(1000);
+                                ASInterface.instance().inputText(password, null, true);
+                            }
+
+                            ASUtils.findAndClick("ID_BTN_LOGIN", AppModel.instance().currScrInfo());
+                        }
+                    }
+                default:
+                    break;
+
+            }
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
         }
     }
 
@@ -146,6 +199,16 @@ public class TiktokAppService extends BaseService {
             Utils.delayRandom(4000, 5000);
         }
         return result;
+    }
+
+    public void getClone() {
+        JSONObject retval = DBPApi.instance().getClone();
+        LOG.I(TAG, "retval: " + retval);
+        try {
+            if (retval != null && retval.getBoolean("success")) {
+                AppModel.instance().currPackage().setCloneInfo(retval.getString("clone_info"));
+            }
+        } catch (JSONException e){}
     }
 
     public static String getTiktokNumericId(String tiktokId) throws  IOException{
