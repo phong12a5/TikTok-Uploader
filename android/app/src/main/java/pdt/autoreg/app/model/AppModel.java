@@ -14,6 +14,7 @@ import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.accessibility.screendefinitions.ScreenNode;
 import pdt.autoreg.app.App;
 import pdt.autoreg.app.AppDefines;
+import pdt.autoreg.devicefaker.Constants;
 
 public class AppModel {
     private static AppModel model = null;
@@ -32,6 +33,10 @@ public class AppModel {
     private AppModel() {
         m_prefs = App.getContext().getSharedPreferences(AppDefines.PDT_PREFS_NAME, MODE_PRIVATE);
 
+        int currentPackageId = m_prefs.getInt("curr_package_id", -1);
+        if(currentPackageId >= 0) {
+            setCurrPackage(new PackageInfo(currentPackageId, Constants.REG_PACKAGE));
+        }
         LOG.D(TAG, "Created Model");
     }
 
@@ -74,6 +79,11 @@ public class AppModel {
 
     public void setCurrPackage(PackageInfo packageInfo) {
         m_currPackage = packageInfo;
+        if(m_currPackage != null) {
+            SharedPreferences.Editor editor = m_prefs.edit();
+            editor.putInt("curr_package_id", m_currPackage.getPackageId());
+            editor.apply();
+        }
     }
 
     public String currScrID() {
