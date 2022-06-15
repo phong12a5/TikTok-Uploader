@@ -36,8 +36,8 @@ import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public abstract class BaseService extends Service {
     private static final String TAG = "BaseService";
-    private static final int RATIO = 100;
-    private int m_time_to_update = 10;
+    private static final int RATIO = 2000;
+    private int m_time_to_update = 20;
     private int m_time_to_gc = 0;
     protected int heightOfScreen = 0;
     protected List<String> m_screenStack = new ArrayList<String>();
@@ -102,6 +102,8 @@ public abstract class BaseService extends Service {
                         m_time_to_update++;
                         if(AppModel.instance().currPackage() == null) {
                             changePackage();
+                        } else if(!AppModel.instance().currPackage().getPackageName().equals(ASInterface.instance().getCurrentForgroundPkg())) {
+                            ASInterface.instance().openPackage(AppModel.instance().currPackage().getPackageName());
                         } else {
                             // detect screen
                             detectScreen(true);
@@ -137,6 +139,7 @@ public abstract class BaseService extends Service {
     };
 
     protected void changePackage() {
+        LOG.I(TAG, "changePackage");
         int nextPkgId = (AppModel.instance().currPackage() == null || (AppModel.instance().currPackage().getPackageId() + 1) >= AppDefines.MAX_PACKAGE_NUM)? 0 : AppModel.instance().currPackage().getPackageId() + 1;
 
         if(AppModel.instance().currPackage() != null) {
@@ -187,7 +190,10 @@ public abstract class BaseService extends Service {
                     return;
                 } else {
                     JSONObject deviceObject = devices.getJSONObject(new Random().nextInt(devices.length()));
-                    FileUtils.writeStringToFile(new File("/data/data/" + AppModel.instance().currPackage().getPackageName() + "/device_info.json"), deviceObject.toString());
+                    String target = "/data/data/" + AppModel.instance().currPackage().getPackageName() + "/device_info.json";
+                    String tmp = "/sdcard/device_info.json";
+                    FileUtils.writeStringToFile(new File(tmp), deviceObject.toString());
+                    RootHelper.execute(String.format("cp %s %s", tmp, target));
                 }
             } catch (Exception e) {
                 LOG.printStackTrace(TAG, e);
@@ -264,10 +270,8 @@ public abstract class BaseService extends Service {
                 success = true;
                 break;
             case AppDefines.PROXY_NETWORK:
-                break;
+                return true;
             case AppDefines.SSHTUNNEL_NETWORK:
-                break;
-            default:
                 break;
         }
 

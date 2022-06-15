@@ -87,7 +87,7 @@ public class App extends Application {
     public static void initApplication(Context context) {
         LOG.D(TAG,"initApplicatione");
 
-        if(RootHelper.isRootAccess()) {
+        if(!RootHelper.isRootAccess()) {
             Utils.showToastMessage(App.getContext(), "Root Access required.");
             System.exit(1);
         }

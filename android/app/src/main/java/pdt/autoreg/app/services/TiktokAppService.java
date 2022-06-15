@@ -40,7 +40,6 @@ public class TiktokAppService extends BaseService {
         LOG.D(TAG,"initEnv");
         super.initEnv(context);
         ProxyHelper.stopProxySwitch();
-        initEnv(this);
         RootHelper.disableAirplane();
     }
 

@@ -40,9 +40,6 @@ public class AppDefines {
     public static final int PROXY_NETWORK = 1;
     public static final int SSHTUNNEL_NETWORK = 2;
 
-
-    public static final String FACEBOOK_APPNAME = "facebook";
-    public static final String INSTAGRAM_APPNAME = "instagram";
     public static final String TIKTOK_APPNAME = "tiktok";
 
     /******************** TIKTOK APP ********************/

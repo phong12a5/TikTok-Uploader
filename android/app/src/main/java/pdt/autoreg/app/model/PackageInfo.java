@@ -47,8 +47,8 @@ public class PackageInfo {
                     }
                 }
             };
-        } catch (JSONException e) {
-            LOG.printStackTrace(TAG, e);
+        } catch (Exception e) {
+            LOG.E(TAG, String.format("setCloneInfo(%s) failed",cloneInfoJson));
         }
     }
 }

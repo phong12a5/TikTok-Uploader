@@ -36,6 +36,7 @@ public class AppModel {
         int currentPackageId = m_prefs.getInt("curr_package_id", -1);
         if(currentPackageId >= 0) {
             setCurrPackage(new PackageInfo(currentPackageId, Constants.REG_PACKAGE));
+            LOG.I(TAG, "Loaded current packaged id: " + currPackage().getPackageId());
         }
         LOG.D(TAG, "Created Model");
     }
