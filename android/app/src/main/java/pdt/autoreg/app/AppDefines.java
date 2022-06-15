@@ -31,7 +31,7 @@ public class AppDefines {
 
     public static final String PDT_FOLDER = Environment.getExternalStorageDirectory() + File.separator + "PDT" + File.separator;
     public static final String PDT_DATABASE_FOLDER = PDT_FOLDER + "databases"+ File.separator;
-    public static final String PDT_DATA_FOLDER = PDT_FOLDER + "data" + File.separator;
+    public static final String PDT_BACKUP_DATA_FOLDER = PDT_FOLDER + "backup_data" + File.separator;
 
     public static final int MAX_PACKAGE_NUM = 20;
     public static final int SCREEN_STACK_SIZE = 30;

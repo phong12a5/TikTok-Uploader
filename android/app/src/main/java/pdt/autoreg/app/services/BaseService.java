@@ -1,5 +1,7 @@
 package pdt.autoreg.app.services;
 
+import static pdt.autoreg.devicefaker.helper.FileHelper.readFile;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -7,10 +9,18 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 
+import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
@@ -139,6 +149,9 @@ public abstract class BaseService extends Service {
 
         AppModel.instance().setCurrPackage(new PackageInfo(nextPkgId, Constants.REG_PACKAGE));
 
+        // restored package from backup
+        restoredPackage();
+
         // clear screen stack
         if (m_screenStack != null && !m_screenStack.isEmpty()) {
             m_screenStack.clear();
@@ -153,6 +166,39 @@ public abstract class BaseService extends Service {
             Utils.delay(5000);
         } catch (Exception e) {
             Utils.showToastMessage(this, "Start " + AppModel.instance().currPackage().getPackageName() + " failed!");
+        }
+    }
+
+    private void restoredPackage() {
+        if(AppModel.instance().currPackage().getCloneInfo() == null) {
+            RootHelper.clearPackage(AppModel.instance().currPackage().getPackageName());
+
+            // generate new device info;
+            String definitions = "";
+            try {
+                InputStream stream = getAssets().open("devices.json");
+                int size = stream.available();
+                byte[] buffer = new byte[size];
+                stream.read(buffer);
+                stream.close();
+                JSONArray devices = new JSONArray(new String(buffer));
+                if(devices.length() <= 0) {
+                    Utils.showToastMessage(this, "No device info model");
+                    return;
+                } else {
+                    JSONObject deviceObject = devices.getJSONObject(new Random().nextInt(devices.length()));
+                    FileUtils.writeStringToFile(new File("/data/data/" + AppModel.instance().currPackage().getPackageName() + "/device_info.json"), deviceObject.toString());
+                }
+            } catch (Exception e) {
+                LOG.printStackTrace(TAG, e);
+            }
+        } else {
+            String username = AppModel.instance().currPackage().getCloneInfo().username();
+            String packageName = AppModel.instance().currPackage().getPackageName();
+            File backupData = new File(AppDefines.PDT_BACKUP_DATA_FOLDER, username);
+            if(backupData.exists() && backupData.isDirectory()) {
+                RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupData, packageName));
+            }
         }
     }
 

@@ -99,9 +99,9 @@ public class App extends Application {
             RootHelper.execute("mkdir " + AppDefines.PDT_FOLDER);
         }
 
-        File fPdtDataFolder = new File(AppDefines.PDT_DATA_FOLDER);
-        if (!fPdtDataFolder.exists()) {
-            RootHelper.execute("mkdir " + AppDefines.PDT_DATA_FOLDER);
+        File fBackupDataFolder = new File(AppDefines.PDT_BACKUP_DATA_FOLDER);
+        if (!fBackupDataFolder.exists()) {
+            RootHelper.execute("mkdir " + AppDefines.PDT_BACKUP_DATA_FOLDER);
         }
     }
 

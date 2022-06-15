@@ -40,7 +40,11 @@ public class PackageInfo {
                 @Override
                 void onCloneInfoChanged() {
                     LOG.D(TAG, "updateCloneInfo: " + DBPApi.instance().updateCloneInfo(this) + "");
-                    ClonesDBHelper.instance().updateCloneInfo(PackageInfo.this.getPackageId(), this.toString());
+                    if(CLONE_STATUS_STORED.equals(this.status())) {
+                        ClonesDBHelper.instance().updateCloneInfo(PackageInfo.this.getPackageId(), this.toString());
+                    } else {
+                        ClonesDBHelper.instance().updateCloneInfo(PackageInfo.this.getPackageId(), "");
+                    }
                 }
             };
         } catch (JSONException e) {
