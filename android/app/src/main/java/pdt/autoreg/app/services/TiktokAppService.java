@@ -214,7 +214,7 @@ public class TiktokAppService extends BaseService {
                 Random random = new Random();
                 RootHelper.execute(String.format("input swipe %d %d %d %d %d",
                         widthOfScreen/2 + random.nextInt(100),
-                        widthOfScreen - 200 + random.nextInt(100),
+                        heightOfScreen - 200 + random.nextInt(100),
                         widthOfScreen/2 + random.nextInt(100),
                         100 + random.nextInt(100),
                         400 + random.nextInt(100)));
@@ -233,7 +233,7 @@ public class TiktokAppService extends BaseService {
                 Random random = new Random();
                 RootHelper.execute(String.format("input swipe %d %d %d %d %d",
                         widthOfScreen/2 + random.nextInt(100),
-                        widthOfScreen - 200 + random.nextInt(100),
+                        heightOfScreen - 200 + random.nextInt(100),
                         widthOfScreen/2 + random.nextInt(100),
                         100 + random.nextInt(100),
                         400 + random.nextInt(100)));
