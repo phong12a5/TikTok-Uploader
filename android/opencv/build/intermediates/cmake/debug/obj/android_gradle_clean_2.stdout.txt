@@ -1,3 +1,0 @@
-ninja: Entering directory `/Users/dangphong/WorkSpace/Android/Project/TikTok-Uploader/android/opencv/.cxx/cmake/debug/x86'
-[1/1] Cleaning all built files...
-Cleaning... 0 files.
