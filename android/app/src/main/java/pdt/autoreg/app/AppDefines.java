@@ -43,6 +43,7 @@ public class AppDefines {
     public static final String TIKTOK_APPNAME = "tiktok";
 
     /******************** TIKTOK APP ********************/
+    public static final String SCREEN_UNKNOWN = "SCREEN_UNKNOWN";
     public static final String SCREEN_TIKTOK_AGREE_TOS = "SCREEN_TIKTOK_AGREE_TOS";
     public static final String SCREEN_TIKTOK_CHOOSE_INTERESTS = "SCREEN_TIKTOK_CHOOSE_INTERESTS";
     public static final String SCREEN_TIKTOK_SWIPE_UP = "SCREEN_TIKTOK_SWIPE_UP";

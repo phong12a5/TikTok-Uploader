@@ -16,6 +16,7 @@ import pdt.autoreg.accessibility.ASUtils;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.app.App;
 import pdt.autoreg.app.AppDefines;
+import pdt.autoreg.app.R;
 import pdt.autoreg.app.api.DBPApi;
 import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.common.Utils;
@@ -85,6 +86,9 @@ public class TiktokAppService extends BaseService {
                         ASUtils.findAndClick("ID_BTN_PROFILE", AppModel.instance().currScrInfo());
                     } else {
                         LOG.I(TAG, "do job ...........");
+                        feedLike();
+                        feedComment();
+                        changePackage();
                     }
                     break;
                 case AppDefines.SCREEN_TIKTOK_LOGIN_TO_TIKTOK:
@@ -117,6 +121,7 @@ public class TiktokAppService extends BaseService {
                             changePackage();
                         } else {
                             ASUtils.findAndClick("ID_BTN_LOGIN", AppModel.instance().currScrInfo());
+                            Utils.delayRandom(3000, 5000);
                         }
                     }
                     break;
@@ -156,12 +161,89 @@ public class TiktokAppService extends BaseService {
                     //ID_BTN_SIGN_UP
                     ASUtils.findAndClick("ID_BTN_SIGN_UP", AppModel.instance().currScrInfo());
                     break;
+                case AppDefines.SCREEN_UNKNOWN:
+                    Utils.delayRandom(2000, 4000);
+                    break;
                 default:
                     break;
 
             }
         } catch (Exception e) {
             LOG.printStackTrace(TAG, e);
+        }
+    }
+
+    private void feedLike() {
+        LOG.I(TAG, "feedLike");
+        int lineCount = 0;
+        for (int i = 0; i < 40; i++) {
+            try {
+                Utils.delayRandom(3000, 15000);
+
+                if(lineCount == 0 && new Random().nextInt(20) == 0) {
+                    int x = widthOfScreen/2 + (new Random().nextInt(100));
+                    int y = heightOfScreen/2 + (new Random().nextInt(100));
+                    RootHelper.execute(String.format("input tap %d %d ", x, y));
+                    Utils.delay(100);
+                    RootHelper.execute(String.format("input tap %d %d ", x + new Random().nextInt(10) , y + new Random().nextInt(10)));
+                    Utils.delay(2000);
+                    lineCount ++;
+                }
+
+                Random random = new Random();
+                RootHelper.execute(String.format("input swipe %d %d %d %d %d",
+                        widthOfScreen/2 + random.nextInt(100),
+                        widthOfScreen - 200 + random.nextInt(100),
+                        widthOfScreen/2 + random.nextInt(100),
+                        100 + random.nextInt(100),
+                        400 + random.nextInt(100)));
+            } catch (Exception e){
+                LOG.printStackTrace(TAG, e);
+            }
+        }
+    }
+
+    private void feedComment() {
+        LOG.I(TAG, "feedComment");
+        for (int i = 0; i < 40; i++) {
+            try {
+                Utils.delayRandom(3000, 15000);
+
+                Random random = new Random();
+                RootHelper.execute(String.format("input swipe %d %d %d %d %d",
+                        widthOfScreen/2 + random.nextInt(100),
+                        widthOfScreen - 200 + random.nextInt(100),
+                        widthOfScreen/2 + random.nextInt(100),
+                        100 + random.nextInt(100),
+                        400 + random.nextInt(100)));
+            } catch (Exception e){
+                LOG.printStackTrace(TAG, e);
+            }
+        }
+    }
+
+    private void postVideo() {
+        long current = System.currentTimeMillis();
+        long last_upload = AppModel.instance().currPackage().getCloneInfo().lastUploadTime();
+        if(last_upload - current < (8 * 60 * 60 * 1000)) {
+            LOG.E(TAG, "waiting for uploading next video");
+        } else {
+            for (int i = 0; i < 30; i ++) {
+                try {
+                    detectScreen(false);
+                    switch (AppModel.instance().currScrID()) {
+                        case AppDefines.SCREEN_TIKTOK_HOME_FOR_YOU:
+                            ASUtils.findAndClick("ID_BTN_UPLOAD", AppModel.instance().currScrInfo());
+                            break;
+                        default:
+                            break;
+                    }
+
+                    Utils.delayRandom(1000, 3000);
+                } catch (Exception e) {
+                    LOG.printStackTrace(TAG, e);
+                }
+            }
         }
     }
 
