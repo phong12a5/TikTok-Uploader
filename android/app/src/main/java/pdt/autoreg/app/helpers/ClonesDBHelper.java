@@ -55,7 +55,7 @@ public class ClonesDBHelper extends SQLiteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
-        printTable(db, STORED_CLONES_TABLE);
+//        printTable(db, STORED_CLONES_TABLE);
     }
 
     public String getCloneInfo(int packageId) {

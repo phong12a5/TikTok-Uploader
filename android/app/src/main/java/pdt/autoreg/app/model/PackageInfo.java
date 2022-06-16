@@ -20,7 +20,9 @@ public class PackageInfo {
         this.packageId = packageId;
         this.packageName = packageName;
 
-        setCloneInfo(ClonesDBHelper.instance().getCloneInfo(packageId));
+        String cloneInfo = ClonesDBHelper.instance().getCloneInfo(packageId);
+        LOG.I(TAG, "packageId: " + packageId + " -- clone_info: " + cloneInfo);
+        setCloneInfo(cloneInfo);
     }
 
     public int getPackageId() {

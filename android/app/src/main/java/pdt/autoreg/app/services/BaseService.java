@@ -5,6 +5,7 @@ import static pdt.autoreg.devicefaker.helper.FileHelper.readFile;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.DisplayMetrics;
@@ -28,6 +29,7 @@ import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.accessibility.screendefinitions.ScreenInfo;
 import pdt.autoreg.accessibility.screendefinitions.ScreenNode;
+import pdt.autoreg.app.App;
 import pdt.autoreg.app.AppDefines;
 import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.BuildConfig;
@@ -151,7 +153,19 @@ public abstract class BaseService extends Service {
 
     protected void changePackage() {
         LOG.I(TAG, "changePackage");
-        int nextPkgId = (AppModel.instance().currPackage() == null || (AppModel.instance().currPackage().getPackageId() + 1) >= AppDefines.MAX_PACKAGE_NUM)? 0 : AppModel.instance().currPackage().getPackageId() + 1;
+
+        int nextPkgId = 0;
+        int lastestPkgId = -1;
+
+        if(AppModel.instance().currPackage() == null) {
+            SharedPreferences prefs = getSharedPreferences(AppDefines.PDT_PREFS_NAME, MODE_PRIVATE);
+            lastestPkgId = prefs.getInt("curr_package_id", -1);
+        } else {
+            lastestPkgId = AppModel.instance().currPackage().getPackageId();
+        }
+
+        if((lastestPkgId + 1)  >= AppDefines.MAX_PACKAGE_NUM)  nextPkgId = 0;
+        else nextPkgId = lastestPkgId + 1;
 
         if(AppModel.instance().currPackage() != null) {
             RootHelper.closePackage(AppModel.instance().currPackage().getPackageName());
@@ -184,9 +198,8 @@ public abstract class BaseService extends Service {
     }
 
     protected void restoredPackage() {
+        RootHelper.clearPackage(AppModel.instance().currPackage().getPackageName());
         if(AppModel.instance().currPackage().getCloneInfo() == null) {
-            RootHelper.clearPackage(AppModel.instance().currPackage().getPackageName());
-
             // generate new device info;
             generateNewDeviceInfo(AppModel.instance().currPackage().getPackageName());
         } else {
@@ -195,7 +208,10 @@ public abstract class BaseService extends Service {
             File backupData = new File(AppDefines.PDT_BACKUP_DATA_FOLDER, username);
             if(backupData.exists() && backupData.isDirectory()) {
                 RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupData, packageName));
+                RootHelper.execute(String.format("chmod 777 /data/data/%s", packageName));
                 Utils.showToastMessage(this, "Restore succeed");
+            } else {
+                generateNewDeviceInfo(AppModel.instance().currPackage().getPackageName());
             }
         }
     }
@@ -214,6 +230,7 @@ public abstract class BaseService extends Service {
     }
 
     protected void generateNewDeviceInfo(String packageName) {
+        LOG.D(TAG, "generateNewDeviceInfo");
         try {
             InputStream stream = getAssets().open("devices.json");
             int size = stream.available();

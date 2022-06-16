@@ -33,11 +33,11 @@ public class AppModel {
     private AppModel() {
         m_prefs = App.getContext().getSharedPreferences(AppDefines.PDT_PREFS_NAME, MODE_PRIVATE);
 
-        int currentPackageId = m_prefs.getInt("curr_package_id", -1);
-        if(currentPackageId >= 0) {
-            setCurrPackage(new PackageInfo(currentPackageId, Constants.REG_PACKAGE));
-            LOG.I(TAG, "Loaded current packaged id: " + currPackage().getPackageId());
-        }
+//        int currentPackageId = m_prefs.getInt("curr_package_id", -1);
+//        if(currentPackageId >= 0) {
+//            LOG.I(TAG, "Loaded current packaged id: " + currentPackageId);
+//            setCurrPackage(new PackageInfo(currentPackageId, Constants.REG_PACKAGE));
+//        }
         LOG.D(TAG, "Created Model");
     }
 
