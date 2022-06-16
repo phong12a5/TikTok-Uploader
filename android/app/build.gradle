@@ -18,6 +18,7 @@ android {
             cmake {
                 cppFlags ""
                 abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86'
+//                arguments "-DOpenCV_DIR=" + opencvsdk + "/sdk/native"
             }
         }
     }
@@ -91,8 +92,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
 
-    implementation project(path: ':DeviceFaker')
-    implementation project(path: ':accessibility')
+    implementation project(':DeviceFaker')
+    implementation project(':accessibility')
+    implementation project(':opencv')
 }
 
 ext {

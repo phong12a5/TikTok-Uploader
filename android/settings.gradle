@@ -1,1 +1,2 @@
 include ':app',':accessibility', ':DeviceFaker'
+include ':opencv'

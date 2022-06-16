@@ -13,6 +13,7 @@ public abstract class CloneInfo extends JSONObject {
 
     public static final String CLONE_STATUS_FREE = "free";
     public static final String CLONE_STATUS_STORED = "stored";
+    public static final String CLONE_STATUS_GETTING = "getting";
 
     CloneInfo(String cloneInfo) throws JSONException {
         super(cloneInfo);

@@ -44,6 +44,7 @@ public class PackageInfo {
             this.cloneInfo = new CloneInfo(cloneInfoJson) {
                 @Override
                 void onCloneInfoChanged() {
+                    LOG.I(TAG, "onCloneInfoChanged: " + this);
                     LOG.D(TAG, "updateCloneInfo: " + DBPApi.instance().updateCloneInfo(this));
                     if(CLONE_STATUS_STORED.equals(this.status())) {
                         ClonesDBHelper.instance().updateCloneInfo(PackageInfo.this.getPackageId(), this.toString());

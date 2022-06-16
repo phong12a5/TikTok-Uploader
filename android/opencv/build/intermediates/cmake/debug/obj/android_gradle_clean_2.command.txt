@@ -1,0 +1,7 @@
+Executable : /Users/dangphong/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+arguments : 
+-C
+/Users/dangphong/WorkSpace/Android/Project/TikTok-Uploader/android/opencv/.cxx/cmake/debug/x86
+clean
+jvmArgs : 
+

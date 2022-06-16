@@ -72,6 +72,7 @@ public class ClonesDBHelper extends SQLiteOpenHelper {
         if(database != null && !database.isReadOnly()) {
             String[] whereArgs = new String[]{String.valueOf(packageId)};
             ContentValues contentValues = new ContentValues();
+            contentValues.put(COLUMN_PACKAGE_ID, packageId);
             contentValues.put(COLUMN_CLONE_INFO, cloneInfo);
 
             if (getCount(database, STORED_CLONES_TABLE, COLUMN_PACKAGE_ID, whereArgs) > 0) {

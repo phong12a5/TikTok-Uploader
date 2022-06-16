@@ -1,0 +1,7 @@
+Executable : /Users/phongdang/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+arguments : 
+-C
+/Users/phongdang/Workspace/Android/Project/AutoFarmer.App/OpenCV-android-sdk/sdk/.cxx/cmake/release/armeabi-v7a
+clean
+jvmArgs : 
+

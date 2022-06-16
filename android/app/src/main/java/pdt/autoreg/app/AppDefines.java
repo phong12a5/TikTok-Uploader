@@ -33,7 +33,7 @@ public class AppDefines {
     public static final String PDT_DATABASE_FOLDER = PDT_FOLDER + "databases"+ File.separator;
     public static final String PDT_BACKUP_DATA_FOLDER = PDT_FOLDER + "backup_data" + File.separator;
 
-    public static final int MAX_PACKAGE_NUM = 20;
+    public static final int MAX_PACKAGE_NUM = 10;
     public static final int SCREEN_STACK_SIZE = 30;
 
     public static final int MOBILE_NETWORK = 0;
@@ -57,5 +57,6 @@ public class AppDefines {
     public static final String SCREEN_TIKTOK_SIGN_UP_EMAIL = "SCREEN_TIKTOK_SIGN_UP_EMAIL";
     public static final String SCREEN_TIKTOK_VERIFY_CAPTCHA = "SCREEN_TIKTOK_VERIFY_CAPTCHA";
     public static final String SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD = "SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD";
+    public static final String SCREEN_TIKTOK_ME_SIGN_UP = "SCREEN_TIKTOK_ME_SIGN_UP";
     /******************** END TIKTOK APP ********************/
 }

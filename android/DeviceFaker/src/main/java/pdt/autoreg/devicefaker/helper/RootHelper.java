@@ -51,6 +51,10 @@ public class RootHelper {
         execute(command);
     }
 
+    public static void screenCapture(String path) {
+        execute("screencap -p " + path);
+    }
+
     public static void clearPackage(String packageName) {
         execute("pm clear " + packageName);
     }

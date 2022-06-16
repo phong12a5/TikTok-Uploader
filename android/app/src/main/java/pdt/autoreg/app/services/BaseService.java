@@ -27,6 +27,7 @@ import java.util.Random;
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.accessibility.screendefinitions.ScreenInfo;
+import pdt.autoreg.accessibility.screendefinitions.ScreenNode;
 import pdt.autoreg.app.AppDefines;
 import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.BuildConfig;
@@ -182,40 +183,57 @@ public abstract class BaseService extends Service {
         }
     }
 
-    private void restoredPackage() {
+    protected void restoredPackage() {
         if(AppModel.instance().currPackage().getCloneInfo() == null) {
             RootHelper.clearPackage(AppModel.instance().currPackage().getPackageName());
 
             // generate new device info;
-            String definitions = "";
-            try {
-                InputStream stream = getAssets().open("devices.json");
-                int size = stream.available();
-                byte[] buffer = new byte[size];
-                stream.read(buffer);
-                stream.close();
-                JSONArray devices = new JSONArray(new String(buffer));
-                if(devices.length() <= 0) {
-                    Utils.showToastMessage(this, "No device info model");
-                    return;
-                } else {
-                    JSONObject deviceObject = devices.getJSONObject(new Random().nextInt(devices.length()));
-                    String target = "/data/data/" + AppModel.instance().currPackage().getPackageName() + "/device_info.json";
-                    String tmp = "/sdcard/device_info.json";
-                    FileUtils.writeStringToFile(new File(tmp), deviceObject.toString());
-                    RootHelper.execute(String.format("cp %s %s", tmp, target));
-                    RootHelper.execute("chmod 777 " + target);
-                }
-            } catch (Exception e) {
-                LOG.printStackTrace(TAG, e);
-            }
+            generateNewDeviceInfo(AppModel.instance().currPackage().getPackageName());
         } else {
             String username = AppModel.instance().currPackage().getCloneInfo().username();
             String packageName = AppModel.instance().currPackage().getPackageName();
             File backupData = new File(AppDefines.PDT_BACKUP_DATA_FOLDER, username);
             if(backupData.exists() && backupData.isDirectory()) {
                 RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupData, packageName));
+                Utils.showToastMessage(this, "Restore succeed");
             }
+        }
+    }
+
+    protected void backupPackage() {
+        String username = AppModel.instance().currPackage().getCloneInfo().username();
+        File backupData = new File(AppDefines.PDT_BACKUP_DATA_FOLDER, username);
+        String packageName = AppModel.instance().currPackage().getPackageName();
+        if(backupData.exists()) {
+            LOG.I(TAG, "backup data existed already");
+            return;
+        } else {
+            RootHelper.execute(String.format("cp -rp /data/data/%s %s", packageName, backupData));
+            Utils.showToastMessage(this, "Backup succeed");
+        }
+    }
+
+    protected void generateNewDeviceInfo(String packageName) {
+        try {
+            InputStream stream = getAssets().open("devices.json");
+            int size = stream.available();
+            byte[] buffer = new byte[size];
+            stream.read(buffer);
+            stream.close();
+            JSONArray devices = new JSONArray(new String(buffer));
+            if(devices.length() <= 0) {
+                Utils.showToastMessage(this, "No device info model");
+                return;
+            } else {
+                JSONObject deviceObject = devices.getJSONObject(new Random().nextInt(devices.length()));
+                String target = "/data/data/" + packageName + "/device_info.json";
+                String tmp = "/sdcard/device_info.json";
+                FileUtils.writeStringToFile(new File(tmp), deviceObject.toString());
+                RootHelper.execute(String.format("cp %s %s", tmp, target));
+                RootHelper.execute("chmod 777 " + target);
+            }
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
         }
     }
 
