@@ -102,14 +102,14 @@ public class MainActivity extends AppCompatActivity {
         LOG.D(TAG, "onResume");
         super.onResume();
             /* Init app when all permission are accepted */
-            if(!AppModel.instance().isServiceStarted()) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startMission();
-                    }
-                }, 30 * 1000);
-            }
+//            if(!AppModel.instance().isServiceStarted()) {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        startMission();
+//                    }
+//                }, 30 * 1000);
+//            }
     }
 
     @Override

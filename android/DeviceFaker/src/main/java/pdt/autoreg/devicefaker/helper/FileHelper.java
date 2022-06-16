@@ -10,6 +10,12 @@ public class FileHelper {
         RootHelper.execute("cp " + fromPath + " " + toPath);
     }
 
+    public static boolean exist(String path){
+        String ret = RootHelper.execute("ls " + path);
+        if(ret == null || ret.isEmpty()) return false;
+        else return ret.contains(path);
+    }
+
     public static String readFile(String path){
         File file = new File(path);
         try {

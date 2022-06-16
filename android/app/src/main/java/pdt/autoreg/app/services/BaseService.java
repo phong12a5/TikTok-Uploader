@@ -38,6 +38,7 @@ import pdt.autoreg.app.WorkerThread;
 import pdt.autoreg.app.common.Utils;
 import pdt.autoreg.app.model.PackageInfo;
 import pdt.autoreg.devicefaker.Constants;
+import pdt.autoreg.devicefaker.helper.FileHelper;
 import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public abstract class BaseService extends Service {
@@ -211,9 +212,9 @@ public abstract class BaseService extends Service {
         } else {
             String username = AppModel.instance().currPackage().getCloneInfo().username();
             String packageName = AppModel.instance().currPackage().getPackageName();
-            File backupData = new File(AppDefines.PDT_BACKUP_DATA_FOLDER, username);
-            if(backupData.exists() && backupData.isDirectory()) {
-                RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupData, packageName));
+            String backupFolderPath = getBackupFolderPath(username);
+            if(FileHelper.exist(backupFolderPath)) {
+                RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupFolderPath, packageName));
                 RootHelper.execute(String.format("chmod 777 /data/data/%s", packageName));
                 Utils.showToastMessage(this, "Restore succeed");
             } else {
@@ -224,15 +225,19 @@ public abstract class BaseService extends Service {
 
     protected void backupPackage() {
         String username = AppModel.instance().currPackage().getCloneInfo().username();
-        File backupData = new File(AppDefines.PDT_BACKUP_DATA_FOLDER, username);
+        String backupFolderPath = getBackupFolderPath(username);
         String packageName = AppModel.instance().currPackage().getPackageName();
-        if(backupData.exists()) {
+        if(FileHelper.exist(backupFolderPath)) {
             LOG.I(TAG, "backup data existed already");
             return;
         } else {
-            RootHelper.execute(String.format("cp -rp /data/data/%s %s", packageName, backupData));
+            RootHelper.execute(String.format("cp -rp /data/data/%s %s", packageName, backupFolderPath));
             Utils.showToastMessage(this, "Backup succeed");
         }
+    }
+
+    public static String getBackupFolderPath(String username) {
+        return AppDefines.BACKUP_DATA_FOLDER + username;
     }
 
     protected void generateNewDeviceInfo(String packageName) {

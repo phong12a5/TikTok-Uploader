@@ -2,28 +2,16 @@ package pdt.autoreg.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Toast;
 
 import com.chilkatsoft.CkGlobal;
-
-import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
-import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.app.common.Utils;
-import pdt.autoreg.devicefaker.Constants;
 import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public class App extends Application {
@@ -99,9 +87,9 @@ public class App extends Application {
             RootHelper.execute("mkdir " + AppDefines.PDT_FOLDER);
         }
 
-        File fBackupDataFolder = new File(AppDefines.PDT_BACKUP_DATA_FOLDER);
+        File fBackupDataFolder = new File(AppDefines.BACKUP_DATA_FOLDER);
         if (!fBackupDataFolder.exists()) {
-            RootHelper.execute("mkdir " + AppDefines.PDT_BACKUP_DATA_FOLDER);
+            RootHelper.execute("mkdir " + AppDefines.BACKUP_DATA_FOLDER);
         }
     }
 
