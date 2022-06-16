@@ -178,7 +178,10 @@ public abstract class BaseService extends Service {
         AppModel.instance().setCurrPackage(new PackageInfo(nextPkgId, Constants.REG_PACKAGE));
 
         // restored package from backup
-        restoredPackage();
+        while (!restoredPackage()) {
+            Utils.showToastMessage(this, "Restored failed -> retry");
+            Utils.delay(1000);
+        }
 
         // accept permissions
         RootHelper.acceptPermission("android.permission.WRITE_EXTERNAL_STORAGE", AppModel.instance().currPackage().getPackageName());
@@ -204,35 +207,45 @@ public abstract class BaseService extends Service {
         }
     }
 
-    protected void restoredPackage() {
-        RootHelper.clearPackage(AppModel.instance().currPackage().getPackageName());
-        if(AppModel.instance().currPackage().getCloneInfo() == null) {
-            // generate new device info;
-            generateNewDeviceInfo(AppModel.instance().currPackage().getPackageName());
-        } else {
-            String username = AppModel.instance().currPackage().getCloneInfo().username();
-            String packageName = AppModel.instance().currPackage().getPackageName();
-            String backupFolderPath = getBackupFolderPath(username);
-            if(FileHelper.exist(backupFolderPath)) {
-                RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupFolderPath, packageName));
-                RootHelper.execute(String.format("chmod 777 /data/data/%s", packageName));
-                Utils.showToastMessage(this, "Restore succeed");
-            } else {
+    protected boolean restoredPackage() {
+        try {
+            RootHelper.clearPackage(AppModel.instance().currPackage().getPackageName());
+            if (AppModel.instance().currPackage().getCloneInfo() == null) {
+                // generate new device info;
                 generateNewDeviceInfo(AppModel.instance().currPackage().getPackageName());
+            } else {
+                String username = AppModel.instance().currPackage().getCloneInfo().username();
+                String packageName = AppModel.instance().currPackage().getPackageName();
+                String backupFolderPath = getBackupFolderPath(username);
+                if (FileHelper.exist(backupFolderPath)) {
+                    RootHelper.execute(String.format("cp -rp %s/* /data/data/%s/", backupFolderPath, packageName));
+                    RootHelper.execute(String.format("chmod 777 -R /data/data/%s", packageName));
+                    Utils.showToastMessage(this, "Restore succeed");
+                } else {
+                    generateNewDeviceInfo(AppModel.instance().currPackage().getPackageName());
+                }
             }
+            return true;
+        } catch (Exception e) {
+            LOG.E(TAG, e.getMessage());
+            return false;
         }
     }
 
-    protected void backupPackage() {
-        String username = AppModel.instance().currPackage().getCloneInfo().username();
-        String backupFolderPath = getBackupFolderPath(username);
-        String packageName = AppModel.instance().currPackage().getPackageName();
-        if(FileHelper.exist(backupFolderPath)) {
-            LOG.I(TAG, "backup data existed already");
-            return;
-        } else {
-            RootHelper.execute(String.format("cp -rp /data/data/%s %s", packageName, backupFolderPath));
-            Utils.showToastMessage(this, "Backup succeed");
+    protected boolean backupPackage() {
+        try {
+            String username = AppModel.instance().currPackage().getCloneInfo().username();
+            String backupFolderPath = getBackupFolderPath(username);
+            String packageName = AppModel.instance().currPackage().getPackageName();
+            if (FileHelper.exist(backupFolderPath)) {
+                LOG.I(TAG, "backup data existed already");
+            } else {
+                RootHelper.execute(String.format("cp -rp /data/data/%s %s", packageName, backupFolderPath));
+                Utils.showToastMessage(this, "Backup succeed");
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

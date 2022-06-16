@@ -167,7 +167,10 @@ public class TiktokAppService extends BaseService {
                         AppModel.instance().currPackage().setIsVerifiedLogin(true);
                         AppModel.instance().currPackage().getCloneInfo().setStatus(CloneInfo.CLONE_STATUS_STORED);
                         Utils.showToastMessage(this, "Verified login");
-                        backupPackage();
+                        while (!backupPackage()) {
+                            Utils.showToastMessage(this, "Backup failed -> retry");
+                            Utils.delay(1000);
+                        }
                         ASInterface.instance().globalBack();
                     } else {
                         RootHelper.closePackage(AppModel.instance().currPackage().getPackageName());
@@ -185,6 +188,16 @@ public class TiktokAppService extends BaseService {
                         ASInterface.instance().openPackage(AppModel.instance().currPackage().getPackageName());
                     }
                     Utils.delayRandom(2000, 4000);
+                    break;
+                case AppDefines.SCREEN_TIKTOK_ACCOUNT_BE_BANNED:
+                    if(AppModel.instance().currPackage().getCloneInfo() != null) {
+                        AppModel.instance().currPackage().getCloneInfo().setStatus(CloneInfo.CLONE_STATUS_BANNED);
+                        RootHelper.execute("rm -rf " + getBackupFolderPath(AppModel.instance().currPackage().getCloneInfo().username()));
+                    }
+                    changePackage();
+                    break;
+                case AppDefines.SCREEN_TIKTOK_SYNC_FACEBOOK_FRIENDS:
+                    ASUtils.findAndClick("ID_BTN_DONT_ALLOW", AppModel.instance().currScrInfo());
                     break;
                 default:
                     break;
@@ -252,8 +265,9 @@ public class TiktokAppService extends BaseService {
             LOG.E(TAG, "waiting for uploading next video");
         } else {
             RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.png");
+            RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.mp4");
             String videoPath = null;
-            String videoLocalPath = AppDefines.PDT_FOLDER + AppModel.instance().currPackage().getCloneInfo().username() + ".mp4";
+            String videoLocalPath = AppDefines.PDT_FOLDER + "video.mp4";
             JSONObject video_info = null;
 
             try {
@@ -278,6 +292,9 @@ public class TiktokAppService extends BaseService {
                     switch (AppModel.instance().currScrID()) {
                         case AppDefines.SCREEN_TIKTOK_HOME_FOR_YOU:
                             ASUtils.findAndClick("ID_BTN_POST", AppModel.instance().currScrInfo());
+                            break;
+                        case AppDefines.SCREEN_TIKTOK_STORIES_INTRODUCE:
+                            ASUtils.findAndClick("ID_BTN_OK", AppModel.instance().currScrInfo());
                             break;
                         default:
                             break;

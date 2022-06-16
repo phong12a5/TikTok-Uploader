@@ -31,7 +31,7 @@ public class AppDefines {
 
     public static final String PDT_FOLDER = Environment.getExternalStorageDirectory() + File.separator + "PDT" + File.separator;
     public static final String PDT_DATABASE_FOLDER = PDT_FOLDER + "databases"+ File.separator;
-    public static final String BACKUP_DATA_FOLDER = "/data/loca/backup_data" + File.separator;
+    public static final String BACKUP_DATA_FOLDER = "/data/local/backup_data" + File.separator;
 
     public static final int MAX_PACKAGE_NUM = 10;
     public static final int SCREEN_STACK_SIZE = 30;
@@ -59,5 +59,9 @@ public class AppDefines {
     public static final String SCREEN_TIKTOK_VERIFY_CAPTCHA = "SCREEN_TIKTOK_VERIFY_CAPTCHA";
     public static final String SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD = "SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD";
     public static final String SCREEN_TIKTOK_ME_SIGN_UP = "SCREEN_TIKTOK_ME_SIGN_UP";
+    public static final String SCREEN_TIKTOK_ACCOUNT_BE_BANNED = "SCREEN_TIKTOK_ACCOUNT_BE_BANNED";
+    public static final String SCREEN_TIKTOK_SYNC_FACEBOOK_FRIENDS = "SCREEN_TIKTOK_SYNC_FACEBOOK_FRIENDS";
+    public static final String SCREEN_TIKTOK_STORIES_INTRODUCE = "SCREEN_TIKTOK_STORIES_INTRODUCE";
+
     /******************** END TIKTOK APP ********************/
 }

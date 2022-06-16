@@ -1,5 +1,7 @@
 package pdt.autoreg.devicefaker.helper;
 
+import androidx.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 import java.io.File;
 import de.robv.android.xposed.XposedBridge;
@@ -10,10 +12,19 @@ public class FileHelper {
         RootHelper.execute("cp " + fromPath + " " + toPath);
     }
 
-    public static boolean exist(String path){
-        String ret = RootHelper.execute("ls " + path);
-        if(ret == null || ret.isEmpty()) return false;
-        else return ret.contains(path);
+    public static boolean exist(String path) throws Exception {
+        final String ret = RootHelper.execute(String.format("(ls %s && echo __YES__) || echo __NO__", path));
+        if(ret.contains("__YES__")) return true;
+        else if(ret.contains("__NO__")) return false;
+        else {
+            throw new Exception() {
+                @Nullable
+                @Override
+                public String getMessage() {
+                    return "exec failed(" + ret + ")";
+                }
+            };
+        }
     }
 
     public static String readFile(String path){
