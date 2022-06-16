@@ -8,8 +8,8 @@ import pdt.autoreg.accessibility.LOG;
 
 public class DropboxAPI {
     private static final String TAG = "DropboxAPI";
-    private static String TOKEN_P1 = "lr7usq7SigAAAAAAAAAAZ74c-";
-    private static String TOKEN_P2 = "zhZd2jOrNZLkp15x1JMx4uSgvLRlMIrXlNoYVQN";
+    private static String TOKEN_P1 = "Bearer xlXhh1QUv5QAAAAAAAAAAUz3kQ";
+    private static String TOKEN_P2 = "xJXSjn2Kgj92FZgYQAcM2H2hlPGMYiRWFTEYlK";
 
     public static boolean downloadFileFromDropbox(String pathFile, String localPath) {
         LOG.D(TAG, "pathFile: " + pathFile + " -- savePath: " + localPath);
@@ -24,7 +24,7 @@ public class DropboxAPI {
         }
         
         //  Add request headers.
-        String token = "Bearer " + TOKEN_P1 + TOKEN_P2;
+        String token = TOKEN_P1 + TOKEN_P2;
         rest.AddHeader("Authorization", token);
 
         CkJsonObject json = new CkJsonObject();

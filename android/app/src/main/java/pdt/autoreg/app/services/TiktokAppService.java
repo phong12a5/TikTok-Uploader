@@ -18,6 +18,7 @@ import pdt.autoreg.app.App;
 import pdt.autoreg.app.AppDefines;
 import pdt.autoreg.app.R;
 import pdt.autoreg.app.api.DBPApi;
+import pdt.autoreg.app.api.DropboxAPI;
 import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.common.Utils;
 import pdt.autoreg.app.helpers.ProxyHelper;
@@ -95,10 +96,10 @@ public class TiktokAppService extends BaseService {
                             String actionCode = action.getString("action");
                             switch (actionCode) {
                                 case "feed_like":
-                                    feedLike();
+//                                    feedLike();
                                     break;
                                 case "feed_comment":
-                                    feedComment();
+//                                    feedComment();
                                     break;
                                 case "post_video":
                                     postVideo();
@@ -244,17 +245,39 @@ public class TiktokAppService extends BaseService {
     }
 
     private void postVideo() {
+        LOG.I(TAG, "postVideo");
         long current = System.currentTimeMillis();
         long last_upload = AppModel.instance().currPackage().getCloneInfo().lastUploadTime();
-        if(last_upload - current < (8 * 60 * 60 * 1000)) {
+        if(current - last_upload < (8 * 60 * 60 * 1000)) {
             LOG.E(TAG, "waiting for uploading next video");
         } else {
+            RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.png");
+            String videoPath = null;
+            String videoLocalPath = AppDefines.PDT_FOLDER + AppModel.instance().currPackage().getCloneInfo().username() + ".mp4";
+            JSONObject video_info = null;
+
+            try {
+                JSONObject ret = DBPApi.instance().getVideoPath(AppModel.instance().currPackage().getCloneInfo().clonedFrom());
+                video_info = ret.getJSONObject("video_info");
+                videoPath = video_info.getString("video_path");
+            } catch (Exception e) {
+                LOG.E(TAG, e.getMessage());
+            }
+
+            if(videoPath == null || videoPath.isEmpty()) {
+                LOG.E(TAG, "postVideo exit (reason: get video_path failed!)");
+                return;
+            } else if(!DropboxAPI.downloadFileFromDropbox(videoPath, videoLocalPath)) {
+                LOG.E(TAG, "postVideo exit (reason: download video failed!)");
+                return;
+            }
+
             for (int i = 0; i < 30; i ++) {
                 try {
                     detectScreen(false);
                     switch (AppModel.instance().currScrID()) {
                         case AppDefines.SCREEN_TIKTOK_HOME_FOR_YOU:
-                            ASUtils.findAndClick("ID_BTN_UPLOAD", AppModel.instance().currScrInfo());
+                            ASUtils.findAndClick("ID_BTN_POST", AppModel.instance().currScrInfo());
                             break;
                         default:
                             break;
@@ -265,6 +288,8 @@ public class TiktokAppService extends BaseService {
                     LOG.printStackTrace(TAG, e);
                 }
             }
+
+            RootHelper.execute("rm -f " + videoLocalPath);
         }
     }
 

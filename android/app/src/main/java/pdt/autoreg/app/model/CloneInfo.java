@@ -64,7 +64,7 @@ public abstract class CloneInfo extends JSONObject {
         try {
             String timeStr = this.getString("last_upload_time");
             return Long.valueOf(timeStr);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             return -1;
         }
     }

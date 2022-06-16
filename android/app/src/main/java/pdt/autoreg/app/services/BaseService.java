@@ -2,6 +2,7 @@ package pdt.autoreg.app.services;
 
 import static pdt.autoreg.devicefaker.helper.FileHelper.readFile;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -177,6 +178,13 @@ public abstract class BaseService extends Service {
 
         // restored package from backup
         restoredPackage();
+
+        // accept permissions
+        RootHelper.acceptPermission("android.permission.WRITE_EXTERNAL_STORAGE", AppModel.instance().currPackage().getPackageName());
+        RootHelper.acceptPermission("android.permission.READ_EXTERNAL_STORAGE", AppModel.instance().currPackage().getPackageName());
+        RootHelper.acceptPermission("android.permission.READ_CONTACTS", AppModel.instance().currPackage().getPackageName());
+        RootHelper.acceptPermission("android.permission.RECORD_AUDIO", AppModel.instance().currPackage().getPackageName());
+        RootHelper.acceptPermission("android.permission.CAMERA", AppModel.instance().currPackage().getPackageName());
 
         // clear screen stack
         if (m_screenStack != null && !m_screenStack.isEmpty()) {
