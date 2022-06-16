@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.DisplayMetrics;
@@ -183,6 +184,9 @@ public abstract class BaseService extends Service {
             Utils.delay(1000);
         }
 
+        // clean all pictures and videos
+        cleanMedia();
+
         // accept permissions
         RootHelper.acceptPermission("android.permission.WRITE_EXTERNAL_STORAGE", AppModel.instance().currPackage().getPackageName());
         RootHelper.acceptPermission("android.permission.READ_EXTERNAL_STORAGE", AppModel.instance().currPackage().getPackageName());
@@ -276,6 +280,14 @@ public abstract class BaseService extends Service {
         } catch (Exception e) {
             LOG.printStackTrace(TAG, e);
         }
+    }
+
+    protected void cleanMedia() {
+        RootHelper.execute("rm -rf " + (Environment.getExternalStorageDirectory() + File.separator + "DCIM/*"));
+        RootHelper.execute("rm -rf " + (Environment.getExternalStorageDirectory() + File.separator + "Movies/*"));
+        RootHelper.execute("rm -rf " + (Environment.getExternalStorageDirectory() + File.separator + "Pictures/*"));
+        RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.png");
+        RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.mp4");
     }
 
     private void updateKeywordDefinitions() {

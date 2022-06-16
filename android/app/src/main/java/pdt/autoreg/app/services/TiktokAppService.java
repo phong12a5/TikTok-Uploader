@@ -1,9 +1,13 @@
 package pdt.autoreg.app.services;
 
 import android.content.Context;
+import android.os.Environment;
+
 import com.squareup.okhttp.OkHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -183,12 +187,6 @@ public class TiktokAppService extends BaseService {
                     //ID_BTN_SIGN_UP
                     ASUtils.findAndClick("ID_BTN_SIGN_UP", AppModel.instance().currScrInfo());
                     break;
-                case AppDefines.SCREEN_UNKNOWN:
-                    if(!AppModel.instance().currPackage().getPackageName().equals(ASInterface.instance().getCurrentForgroundPkg())) {
-                        ASInterface.instance().openPackage(AppModel.instance().currPackage().getPackageName());
-                    }
-                    Utils.delayRandom(2000, 4000);
-                    break;
                 case AppDefines.SCREEN_TIKTOK_ACCOUNT_BE_BANNED:
                     if(AppModel.instance().currPackage().getCloneInfo() != null) {
                         AppModel.instance().currPackage().getCloneInfo().setStatus(CloneInfo.CLONE_STATUS_BANNED);
@@ -200,6 +198,12 @@ public class TiktokAppService extends BaseService {
                     ASUtils.findAndClick("ID_BTN_DONT_ALLOW", AppModel.instance().currScrInfo());
                     break;
                 default:
+                    if(!AppModel.instance().currPackage().getPackageName().equals(ASInterface.instance().getCurrentForgroundPkg())) {
+                        ASInterface.instance().openPackage(AppModel.instance().currPackage().getPackageName());
+                    } else {
+                        ASInterface.instance().globalBack();
+                    }
+                    Utils.delayRandom(2000, 4000);
                     break;
 
             }
@@ -264,9 +268,7 @@ public class TiktokAppService extends BaseService {
         if(current - last_upload < (8 * 60 * 60 * 1000)) {
             LOG.E(TAG, "waiting for uploading next video");
         } else {
-            RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.png");
-            RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.mp4");
-            String videoPath = null;
+            String videoPath = null, videoId = null;
             String videoLocalPath = AppDefines.PDT_FOLDER + "video.mp4";
             JSONObject video_info = null;
 
@@ -274,6 +276,7 @@ public class TiktokAppService extends BaseService {
                 JSONObject ret = DBPApi.instance().getVideoPath(AppModel.instance().currPackage().getCloneInfo().clonedFrom());
                 video_info = ret.getJSONObject("video_info");
                 videoPath = video_info.getString("video_path");
+                videoId = video_info.getString("video_id");
             } catch (Exception e) {
                 LOG.E(TAG, e.getMessage());
             }
@@ -286,6 +289,10 @@ public class TiktokAppService extends BaseService {
                 return;
             }
 
+
+            boolean selectedVideo = false;
+            String describe = getRandomVideoDescribe();
+
             for (int i = 0; i < 30; i ++) {
                 try {
                     detectScreen(false);
@@ -294,7 +301,40 @@ public class TiktokAppService extends BaseService {
                             ASUtils.findAndClick("ID_BTN_POST", AppModel.instance().currScrInfo());
                             break;
                         case AppDefines.SCREEN_TIKTOK_STORIES_INTRODUCE:
+                        case AppDefines.SCREEN_TIKTOK_INTRODUCE_10MINS_VIDEO:
+                        case AppDefines.SCREEN_TIKTOK_ENGLISH_AUTO_GENERATE:
                             ASUtils.findAndClick("ID_BTN_OK", AppModel.instance().currScrInfo());
+                            break;
+                        case AppDefines.SCREEN_TIKTOK_UPLOAD:
+                            ASUtils.findAndClick("ID_BTN_UPLOAD", AppModel.instance().currScrInfo());
+                            break;
+                        case AppDefines.SCREEN_TIKTOK_SELECT_MEDIA:
+                            if(!selectedVideo) {
+                                selectedVideo = ASUtils.findAndClickByTextOrDes(":", AppModel.instance().currScrInfo(), false);
+                            } else {
+                                ASUtils.findAndClick("ID_BTN_NEXT", AppModel.instance().currScrInfo());
+                            }
+                            break;
+                        case AppDefines.SCREEN_TIKTOK_POST:
+                            if(!ASUtils.findByTextOrDes(describe, AppModel.instance().currScrInfo())) {
+                                ASUtils.findAndClick("ID_EDT_DESCRIBE", AppModel.instance().currScrInfo());
+                                Utils.delay(1000);
+                                ASInterface.instance().inputText(describe, null, true);
+                                Utils.delay(500);
+                                ASInterface.instance().globalBack();
+                            } else {
+                                ASUtils.findAndClick("ID_BTN_POST", AppModel.instance().currScrInfo());
+                            }
+                            break;
+                        case AppDefines.SCREEN_TIKTOK_VIDEO_EDITING:
+                            ASUtils.findAndClick("ID_BTN_NEXT", AppModel.instance().currScrInfo());
+                            break;
+                        case AppDefines.SCREEN_TIKTOK_POST_VIDEO_PUBLICLY:
+                            if(ASUtils.findAndClick("ID_BTN_POST_NOW", AppModel.instance().currScrInfo())) {
+                                DBPApi.instance().updateVideoStatus(videoId, "used");
+                                Utils.delayRandom(1000, 15000);
+                                return;
+                            }
                             break;
                         default:
                             break;
@@ -334,7 +374,7 @@ public class TiktokAppService extends BaseService {
                 AppModel.instance().currPackage().setCloneInfo(retval.getString("clone_info"));
                 AppModel.instance().currPackage().getCloneInfo().setStatus(CloneInfo.CLONE_STATUS_GETTING);
             }
-        } catch (JSONException e){}
+        } catch (Exception e){}
     }
 
     public void getActions() {
@@ -345,6 +385,42 @@ public class TiktokAppService extends BaseService {
                 AppModel.instance().currPackage().setActions(retval.getJSONArray("actions"));
             }
         } catch (JSONException e){}
+    }
+
+    private String getRandomVideoDescribe() {
+        String[] listDes = new String[] {
+                "Hi everyone!"
+                ,"Are you ready ...?"
+                ,"Love you <3"
+                ,"Boom boom..."
+                ,"Good morning!"
+                ,"Good afternoon~"
+                ,"Yeah yeah."
+                ,"Being happy :))"
+                ,"So sad ..."
+                ,"Tell me something .."
+                ,"Say something???"
+                ,"Say oh yeah :v"
+                ,"It's ok????"
+                ,"Good?"
+                ,"Let me see your feeling? :)))))))))))"
+                ,"Don't leave me :(("
+                ,"Love me????"
+                ,"Just look in my eyes? :D"
+                ,"Wowwwwwwwwwwwwwww ...."
+                ,"Oh my god"
+                ,"Beautiful girl?"
+                ,"Cute or something????"
+                ,"Don't leave me alone..."
+                ,"Feeling sad ..."
+                ,"So deep :)))))"
+                ,"Yessss .... again... yes..."
+                ,"Why? tell me why?..."
+                ,"Tried my best~"
+                ,"Don't let me say bad words ..."
+                ,"Broken heart ... :(("};
+        
+        return listDes[new Random().nextInt(listDes.length)] +  "#trending #xuhuong.";
     }
 
     public static String getTiktokNumericId(String tiktokId) throws  IOException{
