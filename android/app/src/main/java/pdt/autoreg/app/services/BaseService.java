@@ -115,8 +115,6 @@ public abstract class BaseService extends Service {
                         m_time_to_update++;
                         if(AppModel.instance().currPackage() == null) {
                             changePackage();
-                        } else if(!AppModel.instance().currPackage().getPackageName().equals(ASInterface.instance().getCurrentForgroundPkg())) {
-                            ASInterface.instance().openPackage(AppModel.instance().currPackage().getPackageName());
                         } else {
                             // detect screen
                             detectScreen(true);
@@ -293,6 +291,7 @@ public abstract class BaseService extends Service {
                 AppModel.instance().setCurrScrID(screenInfo.detected_screen_id);
                 AppModel.instance().setCurrtScrInfo(screenInfo.nodes_in_screen);
                 LOG.D(TAG, "screenInfo.detected_screen_id: " + screenInfo.detected_screen_id);
+                for(ScreenNode node : screenInfo.nodes_in_screen) LOG.I(TAG, node + "");
                 if (save2Stack) {
                     m_screenStack.add(AppModel.instance().currScrID());
                 }

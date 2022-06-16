@@ -92,6 +92,18 @@ public class DBPApi {
         }
     }
 
+    public JSONObject getActions(String username) {
+        try {
+            JSONObject body = new JSONObject();
+            body.put("api", "get_actions");
+            body.put("username", username);
+            return sendRequest(body);
+        } catch (Exception e) {
+            LOG.printStackTrace(TAG, e);
+            return null;
+        }
+    }
+
     private JSONObject sendRequest(JSONObject bodyJson) {
         OkHttpClient client = new OkHttpClient();
         client.setProtocols(Arrays.asList(com.squareup.okhttp.Protocol.HTTP_1_1));

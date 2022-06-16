@@ -1,7 +1,10 @@
 package pdt.autoreg.app.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Random;
 
 import pdt.autoreg.app.api.DBPApi;
 import pdt.autoreg.app.helpers.ClonesDBHelper;
@@ -15,6 +18,7 @@ public class PackageInfo {
     private String packageName;
     private CloneInfo cloneInfo = null;
     private boolean isVerifiedLogin = false;
+    private JSONArray actions = null;
 
     public PackageInfo(int packageId, String packageName) {
         this.packageId = packageId;
@@ -58,5 +62,27 @@ public class PackageInfo {
         } catch (Exception e) {
             LOG.E(TAG, String.format("setCloneInfo(%s) failed",cloneInfoJson));
         }
+    }
+
+    public JSONObject takeAction() {
+        if(actions == null || actions.length() == 0) return null;
+
+        int index = new Random().nextInt(actions.length());
+        try {
+            JSONObject action = actions.getJSONObject(index);
+            actions.remove(index);
+            return action;
+        } catch (JSONException e) {
+            LOG.printStackTrace(TAG, e);
+            return null;
+        }
+    }
+
+    public JSONArray getActions() {
+        return actions;
+    }
+
+    public void setActions(JSONArray array) {
+        actions = array;
     }
 }

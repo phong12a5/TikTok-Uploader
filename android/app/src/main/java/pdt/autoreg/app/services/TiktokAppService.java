@@ -86,9 +86,27 @@ public class TiktokAppService extends BaseService {
                         ASUtils.findAndClick("ID_BTN_PROFILE", AppModel.instance().currScrInfo());
                     } else {
                         LOG.I(TAG, "do job ...........");
-                        feedLike();
-                        feedComment();
-                        changePackage();
+                        if(AppModel.instance().currPackage().getActions() == null) {
+                            getActions();
+                        } else if(AppModel.instance().currPackage().getActions().length() == 0) {
+                            changePackage();
+                        } else {
+                            JSONObject action = AppModel.instance().currPackage().takeAction();
+                            String actionCode = action.getString("action");
+                            switch (actionCode) {
+                                case "feed_like":
+                                    feedLike();
+                                    break;
+                                case "feed_comment":
+                                    feedComment();
+                                    break;
+                                case "post_video":
+                                    postVideo();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
                     break;
                 case AppDefines.SCREEN_TIKTOK_LOGIN_TO_TIKTOK:
@@ -162,6 +180,9 @@ public class TiktokAppService extends BaseService {
                     ASUtils.findAndClick("ID_BTN_SIGN_UP", AppModel.instance().currScrInfo());
                     break;
                 case AppDefines.SCREEN_UNKNOWN:
+                    if(!AppModel.instance().currPackage().getPackageName().equals(ASInterface.instance().getCurrentForgroundPkg())) {
+                        ASInterface.instance().openPackage(AppModel.instance().currPackage().getPackageName());
+                    }
                     Utils.delayRandom(2000, 4000);
                     break;
                 default:
@@ -270,6 +291,16 @@ public class TiktokAppService extends BaseService {
             if (retval != null && retval.getBoolean("success")) {
                 AppModel.instance().currPackage().setCloneInfo(retval.getString("clone_info"));
                 AppModel.instance().currPackage().getCloneInfo().setStatus(CloneInfo.CLONE_STATUS_GETTING);
+            }
+        } catch (JSONException e){}
+    }
+
+    public void getActions() {
+        JSONObject retval = DBPApi.instance().getActions(AppModel.instance().currPackage().getCloneInfo().username());
+        LOG.I(TAG, "retval: " + retval);
+        try {
+            if (retval != null && retval.getBoolean("success")) {
+                AppModel.instance().currPackage().setActions(retval.getJSONArray("actions"));
             }
         } catch (JSONException e){}
     }
