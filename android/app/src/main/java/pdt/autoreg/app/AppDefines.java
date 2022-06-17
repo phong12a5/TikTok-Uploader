@@ -29,6 +29,9 @@ import static android.content.ContentUris.parseId;
 public class AppDefines {
     public static final String PDT_PREFS_NAME = "PDT_PREFS_NAME";
 
+    public static final String MOVIES_FOLDER = Environment.getExternalStorageDirectory() + File.separator + "Movies" + File.separator;
+    public static final String DCIM_FOLDER = Environment.getExternalStorageDirectory() + File.separator + "DCIM" + File.separator;
+    public static final String PICTURES_FOLDER = Environment.getExternalStorageDirectory() + File.separator + "Pictures" + File.separator;
     public static final String PDT_FOLDER = Environment.getExternalStorageDirectory() + File.separator + "PDT" + File.separator;
     public static final String PDT_DATABASE_FOLDER = PDT_FOLDER + "databases"+ File.separator;
     public static final String BACKUP_DATA_FOLDER = "/data/local/backup_data" + File.separator;
@@ -60,7 +63,7 @@ public class AppDefines {
     public static final String SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD = "SCREEN_TIKTOK_SIGN_UP_CREATE_PASSWORD";
     public static final String SCREEN_TIKTOK_ME_SIGN_UP = "SCREEN_TIKTOK_ME_SIGN_UP";
     public static final String SCREEN_TIKTOK_ACCOUNT_BE_BANNED = "SCREEN_TIKTOK_ACCOUNT_BE_BANNED";
-    public static final String SCREEN_TIKTOK_SYNC_FACEBOOK_FRIENDS = "SCREEN_TIKTOK_SYNC_FACEBOOK_FRIENDS";
+    public static final String SCREEN_TIKTOK_SYNC_CONTACTS = "SCREEN_TIKTOK_SYNC_FACEBOOK_FRIENDS";
     public static final String SCREEN_TIKTOK_STORIES_INTRODUCE = "SCREEN_TIKTOK_STORIES_INTRODUCE";
     public static final String SCREEN_TIKTOK_UPLOAD = "SCREEN_TIKTOK_UPLOAD";
     public static final String SCREEN_TIKTOK_SELECT_MEDIA = "SCREEN_TIKTOK_SELECT_MEDIA";
@@ -69,6 +72,7 @@ public class AppDefines {
     public static final String SCREEN_TIKTOK_VIDEO_EDITING = "SCREEN_TIKTOK_VIDEO_EDITING";
     public static final String SCREEN_TIKTOK_ENGLISH_AUTO_GENERATE = "SCREEN_TIKTOK_ENGLISH_AUTO_GENERATE";
     public static final String SCREEN_TIKTOK_POST_VIDEO_PUBLICLY = "SCREEN_TIKTOK_POST_VIDEO_PUBLICLY";
-
+    public static final String SCREEN_TIKTOK_ADJUST_CLIPS_FEATURE_ENHANCED = "SCREEN_TIKTOK_ADJUST_CLIPS_FEATURE_ENHANCED";
+    public static final String SCREEN_TIKTOK_VIEW_YOUR_FRIENDS = "SCREEN_TIKTOK_VIEW_YOUR_FRIENDS";
     /******************** END TIKTOK APP ********************/
 }

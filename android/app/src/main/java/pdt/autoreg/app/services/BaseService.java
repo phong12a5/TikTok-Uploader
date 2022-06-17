@@ -283,9 +283,9 @@ public abstract class BaseService extends Service {
     }
 
     protected void cleanMedia() {
-        RootHelper.execute("rm -rf " + (Environment.getExternalStorageDirectory() + File.separator + "DCIM/*"));
-        RootHelper.execute("rm -rf " + (Environment.getExternalStorageDirectory() + File.separator + "Movies/*"));
-        RootHelper.execute("rm -rf " + (Environment.getExternalStorageDirectory() + File.separator + "Pictures/*"));
+        RootHelper.execute("rm -rf " + AppDefines.DCIM_FOLDER + "*");
+        RootHelper.execute("rm -rf " + AppDefines.MOVIES_FOLDER + "*");
+        RootHelper.execute("rm -rf " + AppDefines.PICTURES_FOLDER + "*");
         RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.png");
         RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.mp4");
     }
