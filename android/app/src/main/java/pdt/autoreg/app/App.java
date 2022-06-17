@@ -8,10 +8,12 @@ import android.os.Looper;
 
 import com.chilkatsoft.CkGlobal;
 import java.io.File;
+import java.util.List;
 
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.app.common.Utils;
+import pdt.autoreg.app.helpers.ProxyHelper;
 import pdt.autoreg.devicefaker.helper.RootHelper;
 
 public class App extends Application {
@@ -51,6 +53,17 @@ public class App extends Application {
                 true,
                 volumeObserver
         );
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<ProxyHelper.ProxyInfo> list = ProxyHelper.scanProxyFromFreeProxyList();
+                LOG.D(TAG, "list: " + list.size());
+                for (ProxyHelper.ProxyInfo proxy : list) {
+                    LOG.D(TAG, proxy.toString());
+                }
+            }
+        }).start();
     }
 
     @Override

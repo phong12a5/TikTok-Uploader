@@ -5,13 +5,19 @@ import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -33,6 +39,45 @@ public class ProxyHelper {
     static final String CMD_IPTABLES_REDIRECT_ADD_HTTP_TUNNEL = "/system/bin/iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to 8123\niptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to 8123\niptables -t nat -A OUTPUT -p tcp --dport 5228 -j REDIRECT --to 8123\n";
     static final String CMD_IPTABLES_REDIRECT_ADD_SOCKS = "/system/bin/iptables -t nat -A OUTPUT -p tcp -j REDIRECT --to 8123\n";
 
+    public static class ProxyInfo {
+        String ip;
+        int port;
+        String country;
+        String type;
+
+        public ProxyInfo(String ip, int port, String country, String type) {
+            this.ip = ip;
+            this.port = port;
+            this.country = country;
+            this.type = type;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public String getCountry() {
+            return country;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        @Override
+        public String toString() {
+            return "ProxyInfo{" +
+                    "ip='" + ip + '\'' +
+                    ", port=" + port +
+                    ", country='" + country + '\'' +
+                    ", type='" + type + '\'' +
+                    '}';
+        }
+    }
 
     public static void starProxySwitch(Context context, String host, int port, String protocol) {
         LOG.D(TAG, "starProxySwitch -- host: "+ host + " -- port: " + port + " -- protocol: " + protocol);
@@ -73,6 +118,55 @@ public class ProxyHelper {
                 LOG.E(TAG, "starProxySwitch: " + protocol + " is not supported!");
                 break;
         }
+    }
+
+    public static List<ProxyInfo> scanProxyFromFreeProxyList() {
+        // Scan from https://free-proxy-list.net
+        List<ProxyInfo> list = new ArrayList<>();
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://free-proxy-list.net/")
+                    .method("GET", null)
+                    .addHeader("authority", "free-proxy-list.net")
+                    .addHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                    .addHeader("accept-language", "en-US,en;q=0.9,vi;q=0.8")
+                    .addHeader("cache-control", "max-age=0")
+                    .addHeader("if-modified-since", "Fri, 17 Jun 2022 09:42:02 GMT")
+                    .addHeader("referer", "https://free-proxy-list.net/")
+                    .addHeader("sec-ch-ua", "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"102\", \"Google Chrome\";v=\"102\"")
+                    .addHeader("sec-ch-ua-mobile", "?0")
+                    .addHeader("sec-ch-ua-platform", "\"macOS\"")
+                    .addHeader("sec-fetch-dest", "document")
+                    .addHeader("sec-fetch-mode", "navigate")
+                    .addHeader("sec-fetch-site", "same-origin")
+                    .addHeader("sec-fetch-user", "?1")
+                    .addHeader("upgrade-insecure-requests", "1")
+                    .addHeader("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String body = response.body().string();
+            String start = "<thead><tr><th>IP Address</th><th>Port</th><th>Code</th><th class='hm'>Country</th><th>Anonymity</th><th class='hm'>Google</th><th class='hx'>Https</th><th class='hm'>Last Checked</th></tr></thead>";
+            body = body.substring(body.indexOf(start) + start.length());
+            body = body.substring(0, body.indexOf("</tbody>"));
+
+            List<String> listObj = Utils.regex(body,"(?<=<tr>)(.*?)(?=</tr>)");
+            for (String obj : listObj) {
+                LOG.D(TAG, "obj: " + obj);
+                try {
+                    List<String> propList = Utils.regex(obj, "(?<=<td>)(.*?)(?=</td>)");
+                    LOG.D(TAG, "propList: " + Arrays.toString(propList.toArray()));
+                    if (propList != null && propList.size() == 8) {
+                        list.add(new ProxyInfo(propList.get(0), Integer.parseInt(propList.get(1)), propList.get(2), "yes".equals(propList.get(6)) ? PROXY_PROTOCOL_HTTPS : PROXY_PROTOCOL_HTTP));
+                    }
+                } catch (Exception e) {}
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
     public static void stopProxySwitch() {
