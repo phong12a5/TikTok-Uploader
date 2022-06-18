@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 
+import com.chilkatsoft.CkHttp;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -40,16 +41,22 @@ public class ProxyHelper {
     static final String CMD_IPTABLES_REDIRECT_ADD_SOCKS = "/system/bin/iptables -t nat -A OUTPUT -p tcp -j REDIRECT --to 8123\n";
 
     public static class ProxyInfo {
+        public static final int STATUS_UNCHECK = 0;
+        public static final int STATUS_ALIVE = 1;
+        public static final int STATUS_DIED = 2;
+
         String ip;
         int port;
         String country;
         String type;
+        int status;
 
-        public ProxyInfo(String ip, int port, String country, String type) {
+        public ProxyInfo(String ip, int port, String country, String type, int status) {
             this.ip = ip;
             this.port = port;
             this.country = country;
             this.type = type;
+            this.status = status;
         }
 
         public String getIp() {
@@ -75,12 +82,13 @@ public class ProxyHelper {
                     ", port=" + port +
                     ", country='" + country + '\'' +
                     ", type='" + type + '\'' +
+                    ", status=" + status +
                     '}';
         }
     }
 
-    public static void starProxySwitch(Context context, String host, int port, String protocol) {
-        LOG.D(TAG, "starProxySwitch -- host: "+ host + " -- port: " + port + " -- protocol: " + protocol);
+    public static void starProxySwitch(ProxyInfo proxyInfo) {
+        LOG.D(TAG, "starProxySwitch: " + proxyInfo);
         // /system/bin/iptables -t nat -A OUTPUT -p tcp -d 189.231.202.141 -j RETURN
         LOG.D(TAG,"starProxySwitch");
         String cmd1 = "chmod 700 /data/data/pdt.autoreg.app/files/redsocks";
@@ -90,37 +98,37 @@ public class ProxyHelper {
         String cmd5 = "chmod 700 /data/data/pdt.autoreg.app/files/gost";
 
 
-        switch (protocol) {
+        switch (proxyInfo.type) {
             case PROXY_PROTOCOL_HTTP: {
-                String cmd6 = String.format(context.getFilesDir() + File.separator + "proxy.sh " + context.getFilesDir() + File.separator + " start %s %s %d false \"\" \"\"", protocol, host, port);
-                String cmd7 = String.format("/system/bin/iptables -t nat -A OUTPUT -p tcp -d %s -j RETURN", host);
+                String cmd6 = String.format("/data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ start %s %s %d false \"\" \"\"", proxyInfo.type, proxyInfo.ip, proxyInfo.port);
+                String cmd7 = String.format("/system/bin/iptables -t nat -A OUTPUT -p tcp -d %s -j RETURN", proxyInfo.ip);
                 String cmd8 = CMD_IPTABLES_REDIRECT_ADD_HTTP;
                 RootHelper.execute(new String[]{cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8});
             }
             break;
             case PROXY_PROTOCOL_HTTPS: {
-                String cmd6 = String.format(context.getFilesDir() + File.separator + "proxy.sh " + context.getFilesDir() + File.separator + " -L=http://127.0.0.1:8126 -F=https://%s:%d?ip=%s", host, port, host);
-                String cmd7 = context.getFilesDir() + File.separator + "proxy.sh " + context.getFilesDir() + File.separator + " start http 127.0.0.1 8126 false \"\" \"\"";
-                String cmd8 = String.format("/system/bin/iptables -t nat -A OUTPUT -p tcp -d %s -j RETURN", host);
+                String cmd6 = String.format("/data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ -L=http://127.0.0.1:8126 -F=https://%s:%d?ip=%s", proxyInfo.ip, proxyInfo.port, proxyInfo.ip);
+                String cmd7 = "/data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ start http 127.0.0.1 8126 false \"\" \"\"";
+                String cmd8 = String.format("/system/bin/iptables -t nat -A OUTPUT -p tcp -d %s -j RETURN", proxyInfo.ip);
                 String cmd9 = CMD_IPTABLES_REDIRECT_ADD_HTTP;
                 RootHelper.execute(new String[]{cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8, cmd9});
             }
             break;
             case PROXY_PROTOCOL_SOCKS4:
             case PROXY_PROTOCOL_SOCKS5: {
-                String cmd6 = String.format(context.getFilesDir() + File.separator + "proxy.sh " + context.getFilesDir() + File.separator + " start %s %s %d false \"\" \"\"", protocol, host, port);
-                String cmd7 = String.format("/system/bin/iptables -t nat -A OUTPUT -p tcp -d %s -j RETURN", host);
+                String cmd6 = String.format("/data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ start %s %s %d false \"\" \"\"", proxyInfo.type, proxyInfo.ip, proxyInfo.port);
+                String cmd7 = String.format("/system/bin/iptables -t nat -A OUTPUT -p tcp -d %s -j RETURN", proxyInfo.ip);
                 String cmd8 = CMD_IPTABLES_REDIRECT_ADD_SOCKS;
                 RootHelper.execute(new String[]{cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8});
             }
             break;
             default:
-                LOG.E(TAG, "starProxySwitch: " + protocol + " is not supported!");
+                LOG.E(TAG, "starProxySwitch: " + proxyInfo.type + " is not supported!");
                 break;
         }
     }
 
-    public static List<ProxyInfo> scanProxyFromFreeProxyList() {
+    public static List<ProxyInfo> scanProxyFromFreeProxyList(String country, String[] types) {
         // Scan from https://free-proxy-list.net
         List<ProxyInfo> list = new ArrayList<>();
         try {
@@ -152,12 +160,23 @@ public class ProxyHelper {
 
             List<String> listObj = Utils.regex(body,"(?<=<tr>)(.*?)(?=</tr>)");
             for (String obj : listObj) {
-                LOG.D(TAG, "obj: " + obj);
+                List<String> propList = new ArrayList<>();
+
                 try {
-                    List<String> propList = Utils.regex(obj, "(?<=<td>)(.*?)(?=</td>)");
-                    LOG.D(TAG, "propList: " + Arrays.toString(propList.toArray()));
+                    while (true) {
+                        int startIndex = obj.indexOf(">");
+                        if(startIndex == -1) break;
+                        int endIndex = obj.indexOf("</td>");
+                        if(endIndex == -1) break;
+                        propList.add(obj.substring(startIndex + 1, endIndex));
+                        obj = obj.substring(endIndex + 5);
+                    }
+
                     if (propList != null && propList.size() == 8) {
-                        list.add(new ProxyInfo(propList.get(0), Integer.parseInt(propList.get(1)), propList.get(2), "yes".equals(propList.get(6)) ? PROXY_PROTOCOL_HTTPS : PROXY_PROTOCOL_HTTP));
+                        String proxy_country = propList.get(2);
+                        String proxy_type = "yes".equals(propList.get(6)) ? PROXY_PROTOCOL_HTTPS : PROXY_PROTOCOL_HTTP;
+                        if((country == null || country.equals(proxy_country)) && (types == null || Arrays.asList(types).contains(proxy_type)))
+                            list.add(new ProxyInfo(propList.get(0), Integer.parseInt(propList.get(1)), propList.get(2), proxy_type, ProxyInfo.STATUS_UNCHECK));
                     }
                 } catch (Exception e) {}
             }
@@ -298,5 +317,31 @@ public class ProxyHelper {
             LOG.E(TAG, "scanProxy error: " + e);
             return null;
         }
+    }
+
+    public static boolean checkProxyALive(ProxyInfo proxyInfo) {
+        LOG.I(TAG, "checkProxyALive: " + proxyInfo);
+        CkHttp http = new CkHttp();
+        http.put_ConnectTimeout(3);
+        http.put_ConnectTimeout(3);
+
+        if(PROXY_PROTOCOL_SOCKS5.equals(proxyInfo.type)) {
+            http.put_SocksVersion(5);
+            http.put_SocksUsername("myUsername");
+            http.put_SocksPassword("myPassword");
+            http.put_SocksHostname(proxyInfo.ip);
+            http.put_SocksPort(proxyInfo.port);
+        } else if(PROXY_PROTOCOL_SOCKS4.equals(proxyInfo.type))  {
+            http.put_SocksVersion(4);
+            http.put_SocksHostname(proxyInfo.ip);
+            http.put_SocksPort(proxyInfo.port);
+        } else {
+            http.put_ProxyDomain(proxyInfo.ip);
+            http.put_ProxyPort(proxyInfo.port);
+        }
+
+        // Now do whatever it is you need to do.  All communications will go through the proxy.
+        String html = http.quickGetStr("https://api64.ipify.org/?format=text");
+        return html != null && http.get_LastMethodSuccess();
     }
 }

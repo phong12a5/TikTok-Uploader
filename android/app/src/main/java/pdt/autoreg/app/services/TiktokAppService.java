@@ -375,22 +375,6 @@ public class TiktokAppService extends BaseService {
         }
     }
 
-    private void resetNetwork() {
-        switch (AppModel.instance().networkType()) {
-            case AppDefines.PROXY_NETWORK:
-                ProxyHelper.stopProxySwitch();
-                break;
-            case AppDefines.SSHTUNNEL_NETWORK:
-//                closeTunnel();
-                break;
-            case AppDefines.MOBILE_NETWORK:
-                RootHelper.disableAirplane();
-                break;
-            default:
-                break;
-        }
-    }
-
     public void getClone() {
         JSONObject retval = DBPApi.instance().getClone();
         LOG.I(TAG, "retval: " + retval);

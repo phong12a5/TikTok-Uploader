@@ -33,6 +33,7 @@ import pdt.autoreg.accessibility.screendefinitions.ScreenInfo;
 import pdt.autoreg.accessibility.screendefinitions.ScreenNode;
 import pdt.autoreg.app.App;
 import pdt.autoreg.app.AppDefines;
+import pdt.autoreg.app.helpers.ProxyHelper;
 import pdt.autoreg.app.model.AppModel;
 import pdt.autoreg.app.BuildConfig;
 import pdt.autoreg.app.WorkerThread;
@@ -154,6 +155,8 @@ public abstract class BaseService extends Service {
 
     protected void changePackage() {
         LOG.I(TAG, "changePackage");
+
+        resetNetwork();
 
         int nextPkgId = 0;
         int lastestPkgId = -1;
@@ -290,6 +293,24 @@ public abstract class BaseService extends Service {
         RootHelper.execute("rm " + AppDefines.PDT_FOLDER + "*.mp4");
     }
 
+    private void resetNetwork() {
+        LOG.I(TAG, "resetNetwork -> networkType: " + AppModel.instance().networkType());
+        switch (AppModel.instance().networkType()) {
+            case AppDefines.PROXY_NETWORK:
+                ProxyHelper.stopProxySwitch();
+                RootHelper.disableAirplane();
+                RootHelper.execute("svc wifi enable");
+                break;
+            case AppDefines.MOBILE_NETWORK:
+                RootHelper.disableAirplane();
+                RootHelper.execute("svc wifi disable");
+                RootHelper.execute("svc data enable");
+                break;
+            default:
+                break;
+        }
+    }
+
     private void updateKeywordDefinitions() {
         String content = "";
         try {
@@ -353,7 +374,15 @@ public abstract class BaseService extends Service {
                 success = true;
                 break;
             case AppDefines.PROXY_NETWORK:
-                return true;
+                List<ProxyHelper.ProxyInfo> list = ProxyHelper.scanProxyFromFreeProxyList("US", new String[]{ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
+                Collections.shuffle(list);
+                for (ProxyHelper.ProxyInfo proxy : list) {
+                    if(ProxyHelper.checkProxyALive(proxy)) {
+                        break;
+                    }
+                    ProxyHelper.starProxySwitch(proxy);
+                }
+                return false;
             case AppDefines.SSHTUNNEL_NETWORK:
                 break;
         }
@@ -381,3 +410,25 @@ public abstract class BaseService extends Service {
         */
     }
 }
+
+
+//chmod 700 /data/user/0/org.proxydroid/files/proxy.sh
+//chmod 700 /data/user/0/org.proxydroid/files/gost.sh
+//chmod 700 /data/user/0/org.proxydroid/files/cntlm
+//chmod 700 /data/user/0/org.proxydroid/files/gost
+///data/user/0/org.proxydroid/files/proxy.sh /data/user/0/org.proxydroid/files/ start http 66.94.97.238 443 false "" ""
+///system/bin/iptables -t nat -A OUTPUT -p tcp -d 66.94.97.238 -j RETURN
+//    /system/bin/iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to 8123
+//            /system/bin/iptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to 8124
+//            /system/bin/iptables -t nat -A OUTPUT -p tcp --dport 5228 -j REDIRECT --to 8124
+//
+//chmod 700 /data/data/pdt.autoreg.app/files/redsocks]
+//chmod 700 /data/data/pdt.autoreg.app/files/proxy.sh]
+//chmod 700 /data/data/pdt.autoreg.app/files/gost.sh]
+//chmod 700 /data/data/pdt.autoreg.app/files/cntlm]
+//chmod 700 /data/data/pdt.autoreg.app/files/gost]
+///data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ start http 66.94.97.238 443 false "" ""]
+///system/bin/iptables -t nat -A OUTPUT -p tcp -d 66.94.97.238 -j RETURN]
+///system/bin/iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to 8123
+//            iptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to 8124
+//            iptables -t nat -A OUTPUT -p tcp --dport 5228 -j REDIRECT --to 8124

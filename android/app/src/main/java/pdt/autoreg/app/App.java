@@ -8,7 +8,12 @@ import android.os.Looper;
 
 import com.chilkatsoft.CkGlobal;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
@@ -45,7 +50,9 @@ public class App extends Application {
         sApplication = this;
         unlockChilkat();
         initApplication(this);
-        copyProxyTools(getContext());
+        ProxyHelper.stopProxySwitch();
+//        ProxyHelper.starProxySwitch(new ProxyHelper.ProxyInfo("66.94.97.238", 443, "US", "http", 0));
+//        copyProxyTools(getContext());
 
         volumeObserver = new VolumeObserver(handler);
         getContentResolver().registerContentObserver(
@@ -57,10 +64,18 @@ public class App extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<ProxyHelper.ProxyInfo> list = ProxyHelper.scanProxyFromFreeProxyList();
-                LOG.D(TAG, "list: " + list.size());
-                for (ProxyHelper.ProxyInfo proxy : list) {
-                    LOG.D(TAG, proxy.toString());
+                List<ProxyHelper.ProxyInfo> list = ProxyHelper.scanProxyFromFreeProxyList("US", new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
+                while (!list.isEmpty()) {
+                    final ProxyHelper.ProxyInfo proxy = list.remove(new Random().nextInt(list.size()));
+                    if(ProxyHelper.checkProxyALive(proxy)) {
+                        LOG.D(TAG, "proxy live: " + proxy);
+                        ProxyHelper.starProxySwitch(proxy);
+                        Utils.delay(5000);
+                        String publicIp = Utils.getPuclicIP();
+                        LOG.D(TAG, "publicIp: " + publicIp);
+                        if(publicIp != null) break;
+                        else ProxyHelper.stopProxySwitch();
+                    }
                 }
             }
         }).start();
