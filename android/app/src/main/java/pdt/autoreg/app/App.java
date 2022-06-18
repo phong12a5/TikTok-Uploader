@@ -7,13 +7,22 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.chilkatsoft.CkGlobal;
+import com.chilkatsoft.CkHttp;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
@@ -64,19 +73,40 @@ public class App extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<ProxyHelper.ProxyInfo> list = ProxyHelper.scanProxyFromFreeProxyList("US", new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
+                List<ProxyHelper.ProxyInfo> list1 = ProxyHelper.scanProxyFromFreeProxyList(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
+                List<ProxyHelper.ProxyInfo> list2 = ProxyHelper.scanProxyFromGeonode(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS, ProxyHelper.PROXY_PROTOCOL_SOCKS4, ProxyHelper.PROXY_PROTOCOL_SOCKS5});
+                List<ProxyHelper.ProxyInfo> list3 =  ProxyHelper.scanProxyFromFreeProxyCz("US", null);
+
+                List<ProxyHelper.ProxyInfo> list = list1;
+                list.addAll(list2);
+                list.addAll(list3);
+
                 while (!list.isEmpty()) {
                     final ProxyHelper.ProxyInfo proxy = list.remove(new Random().nextInt(list.size()));
                     if(ProxyHelper.checkProxyALive(proxy)) {
                         LOG.D(TAG, "proxy live: " + proxy);
                         ProxyHelper.starProxySwitch(proxy);
-                        Utils.delay(5000);
-                        String publicIp = Utils.getPuclicIP();
-                        LOG.D(TAG, "publicIp: " + publicIp);
-                        if(publicIp != null) break;
-                        else ProxyHelper.stopProxySwitch();
+                        Utils.delay(3000);
+
+                        OkHttpClient client = new OkHttpClient();
+                        client.setConnectTimeout(2, TimeUnit.SECONDS); // connect timeout
+                        client.setReadTimeout(2, TimeUnit.SECONDS);    // socket timeout
+
+                        Request request = new Request.Builder().url("https://api.ipify.org?format=text").build();
+                        try {
+                            Response response = client.newCall(request).execute();
+                            if(response != null && response.code() == 200) {
+                                LOG.D(TAG,"ip: " + response.body().string());
+                                break;
+                            } else {
+                                LOG.D(TAG,"startProxy failed -> proxy: " + proxy);
+                            }
+                        } catch (IOException e) {
+                            LOG.E(TAG, "startProxy failed -> error: " + e.getMessage());
+                        }
                     }
                 }
+                LOG.I(TAG, "DONE");
             }
         }).start();
     }

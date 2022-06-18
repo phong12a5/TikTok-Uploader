@@ -10,6 +10,7 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.chilkatsoft.CkHttp;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
@@ -102,29 +103,14 @@ public class Utils {
     }
 
     public static String getPuclicIP() {
-        //https://api64.ipify.org/?format=text
         try {
-            OkHttpClient client = new OkHttpClient();
-            client.setProtocols(Arrays.asList(com.squareup.okhttp.Protocol.HTTP_1_1));
-
-            String url = "https://api64.ipify.org/?format=text";
-            LOG.D(TAG, "url: " + url);
-            com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-
-            com.squareup.okhttp.Response response = client.newCall(request).execute();
-            String resStr = response.body().string();
-            LOG.D(TAG, "resStr: " + resStr);
-            LOG.D(TAG, "code: " + response.code());
-            if (response.code() == 200) {
-                return resStr;
-            } else {
-                return null;
-            }
+            CkHttp http = new CkHttp();
+            http.put_ConnectTimeout(3);
+            http.put_ConnectTimeout(3);
+            String html = http.quickGetStr("https://api64.ipify.org/?format=text");
+            return html;
         } catch (Exception e) {
-            LOG.E(TAG, "scanProxy error: " + e);
+            LOG.E(TAG, "getPuclicIP error: " + e);
             return null;
         }
     }

@@ -128,13 +128,23 @@ public class ProxyHelper {
         }
     }
 
-    public static List<ProxyInfo> scanProxyFromFreeProxyList(String country, String[] types) {
-        // Scan from https://free-proxy-list.net
+    public static void stopProxySwitch() {
+        LOG.D(TAG,"stopProxySwitch");
+        String cmd1 = "/system/bin/iptables -t nat -F OUTPUT";
+        String cmd2 = "/data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ stop";
+        String[] commands = {cmd1,cmd2};
+        RootHelper.execute(commands);
+    }
+
+    public static List<ProxyInfo> scanProxyFromFreeProxyList(String[] countries, String[] types) {
+        LOG.D(TAG, "scanProxyFromFreeProxyList");
         List<ProxyInfo> list = new ArrayList<>();
         try {
+            String url = "https://free-proxy-list.net/";
+            LOG.D(TAG, "url:" + url);
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url("https://free-proxy-list.net/")
+                    .url(url)
                     .method("GET", null)
                     .addHeader("authority", "free-proxy-list.net")
                     .addHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
@@ -175,7 +185,7 @@ public class ProxyHelper {
                     if (propList != null && propList.size() == 8) {
                         String proxy_country = propList.get(2);
                         String proxy_type = "yes".equals(propList.get(6)) ? PROXY_PROTOCOL_HTTPS : PROXY_PROTOCOL_HTTP;
-                        if((country == null || country.equals(proxy_country)) && (types == null || Arrays.asList(types).contains(proxy_type)))
+                        if((countries == null || Arrays.asList(countries).contains(proxy_country)) && (types == null || Arrays.asList(types).contains(proxy_type)))
                             list.add(new ProxyInfo(propList.get(0), Integer.parseInt(propList.get(1)), propList.get(2), proxy_type, ProxyInfo.STATUS_UNCHECK));
                     }
                 } catch (Exception e) {}
@@ -188,136 +198,92 @@ public class ProxyHelper {
         return list;
     }
 
-    public static void stopProxySwitch() {
-        LOG.D(TAG,"stopProxySwitch");
-        String cmd1 = "/system/bin/iptables -t nat -F OUTPUT";
-        String cmd2 = "/data/data/pdt.autoreg.app/files/proxy.sh /data/data/pdt.autoreg.app/files/ stop";
-        String[] commands = {cmd1,cmd2};
-        RootHelper.execute(commands);
-    }
-
-    JSONObject scanProxyFromGeonode(int limit, int page, String protocol, String countryPrefer) {
-        //https://proxylist.geonode.com/api/proxy-list?limit=50&page=1&sort_by=lastChecked&sort_type=desc&fbclid=IwAR1svtJ4Y3C_INVfgD8ai8QCzMFagQioNHikd2VaUo2iEIKLLtiRLWH39Nw
-        //http://pubproxy.com/api/proxy?limit=20
+    public static List<ProxyInfo> scanProxyFromGeonode(String[] countries, String[] protocols) {
+        LOG.D(TAG, "scanProxyFromGeonode");
+        List<ProxyInfo> results = new ArrayList<>();
         try {
-            OkHttpClient client = new OkHttpClient();
-            client.setProtocols(Arrays.asList(com.squareup.okhttp.Protocol.HTTP_1_1));
-
-            String url = new Random().nextBoolean()? String.format("https://proxylist.geonode.com/api/proxy-list?limit=%d&page=%d&sort_by=lastChecked&sort_type=desc",limit,page) :
-                    "http://pubproxy.com/api/proxy?limit=20";
+            String url = String.format("https://proxylist.geonode.com/api/proxy-list?limit=200&page=%d&sort_by=lastChecked&sort_type=desc&country=US",1);
             LOG.D(TAG, "url: " + url);
-            com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-
-            com.squareup.okhttp.Response response = client.newCall(request).execute();
-            String resStr = response.body().string();
-            LOG.D(TAG, "resStr: " + resStr);
-            LOG.D(TAG, "code: " + response.code());
-            if (response.code() == 200) {
-                JSONObject responseJson = new JSONObject(resStr);
-                JSONArray proxyList = responseJson.getJSONArray("data");
-                LOG.D(TAG, "proxyList: " + proxyList);
-                JSONObject retVal = null;
-
-                while (proxyList.length() > 0) {
-                    int index = new Random().nextInt(proxyList.length());
-                    JSONArray protocols = proxyList.getJSONObject(index).getJSONArray("protocols");
-                    String country = proxyList.getJSONObject(index).getString("country");
-                    if(protocols.toString().contains(protocol) && (countryPrefer == null || countryPrefer.equals(country))) {
-                        retVal = new JSONObject();
-                        retVal.put("ip", proxyList.getJSONObject(index).getString("ip"));
-                        retVal.put("port", proxyList.getJSONObject(index).getInt("port"));
-                        retVal.put("country", proxyList.getJSONObject(index).getString("country"));
-                        break;
-                    } else {
-                        proxyList.remove(index);
-                    }
-                }
-                return retVal;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            LOG.E(TAG, "scanProxy error: " + e);
-            return null;
-        }
-    }
-
-    public static JSONObject scanProxyFromWeb() {
-        LOG.D(TAG, "scanProxyFromWeb");
-        JSONObject proxy = null;
-        try {
             OkHttpClient client = new OkHttpClient();
-            client.setCache(null);
-            client.setProtocols(Arrays.asList(com.squareup.okhttp.Protocol.HTTP_1_1));
-
-            String url = "http://free-proxy.cz/en/proxylist/main/3";
-            url = url.replace(" ","+") + (url.contains("?") ? "&" : "?") + "_=" + System.currentTimeMillis();
-
-            LOG.D(TAG, "url: " + url);
-            com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
+            Request request = new Request.Builder()
                     .url(url)
                     .method("GET", null)
                     .build();
-
-            com.squareup.okhttp.Response response = client.newCall(request).execute();
+            Response response = client.newCall(request).execute();
             String resStr = response.body().string();
-            LOG.D(TAG, "resStr: " + resStr);
+            if (response.code() == 200) {
+                JSONObject responseJson = new JSONObject(resStr);
+                JSONArray proxyList = responseJson.getJSONArray("data");
 
-            List<String> listIps = Utils.regex(resStr,"(?<=Base64.decode\\(\\\")(.*?)(?=\\\"\\))");
-            LOG.D(TAG, "listIps: " + listIps);
+                for (int i = 0; i < proxyList.length(); i++) {
+                    JSONArray supportProtocols = proxyList.getJSONObject(i).getJSONArray("protocols");
+                    boolean checkProtocol = false;
+                    for (int j = 0; j < supportProtocols.length(); j++) {
+                        if(Arrays.asList(protocols).contains(supportProtocols.getString(j))) {
+                            checkProtocol = true;
+                            break;
+                        }
+                    }
 
-            List<String> listPort = Utils.regex(resStr,"(?<=<td style=\\\"\\\"><span class=\\\"fport\\\" style=\\'\\'>)(.*?)(?=</span></td>)");;
-            LOG.D(TAG, "listPort: " + listPort);
+                    if(!checkProtocol) continue;
 
-            List<String> listType = Utils.regex(resStr,"(?<=</span></td><td><small>)(.*?)(?=</small></td>)");;
-            LOG.D(TAG, "listType: " + listType);
-            if(listIps.size() == listPort.size() &&
-                    listPort.size() == listType.size()) {
-                LOG.D(TAG, "listType: " + listType);
-                for (int i = 0; i < listIps.size(); i++ ) {
-                    String ip =  new String(java.util.Base64.getDecoder().decode(listIps.get(i)), "UTF-8");
-                    if(Utils.ping(ip)) {
-                        proxy = new JSONObject();
-                        proxy.put("ip",ip);
-                        proxy.put("port",Integer.valueOf(listPort.get(i)));
-                        proxy.put("type",listType.get(i));
-                        break;
+                    JSONObject proxyObject = proxyList.getJSONObject(i);
+                    String country = proxyObject.getString("country");
+                    if(countries == null || Arrays.asList(countries).contains(country)) {
+                        results.add(new ProxyInfo(proxyObject.getString("ip"), proxyObject.getInt("port"), country, supportProtocols.getString(0), ProxyInfo.STATUS_UNCHECK));
                     }
                 }
             }
         } catch (Exception e) {
-            LOG.E(TAG, "scanProxy error: " + e);
+            LOG.printStackTrace(TAG, e);
         }
-        return proxy;
+
+        return results;
     }
 
-    protected JSONObject scanProxy() {
+    public static List<ProxyInfo> scanProxyFromFreeProxyCz(String country, String protocol) {
+        LOG.D(TAG, "scanProxyFromFreeProxyCz");
+        List<ProxyInfo> results = new ArrayList<>();
         try {
+//            String url = "http://free-proxy.cz/en";
+//            url = url.replace(" ","+") + (url.contains("?") ? "&" : "?") + "_=" + System.currentTimeMillis();
+
+            String url = String.format("http://free-proxy.cz/en/proxylist/country/%s/%s/ping/all",country == null? "all":country, protocol== null? "all" : protocol);
+            LOG.D(TAG, "url:" + url);
+
             OkHttpClient client = new OkHttpClient();
-            client.setProtocols(Arrays.asList(com.squareup.okhttp.Protocol.HTTP_1_1));
-
-            com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder()
-                    .url("https://api.getproxylist.com/proxy?protocol[]=http&minUptime=75")
-                    .get()
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("GET", null)
+                    .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                    .addHeader("Accept-Language", "en-US,en;q=0.9,vi;q=0.8")
+                    .addHeader("Cache-Control", "max-age=0")
+                    .addHeader("Connection", "keep-alive")
+                    .addHeader("Cookie", "fp=27ef3f4f743abadf92a17cc9d198dccd")
+                    .addHeader("Referer", "http://free-proxy.cz/en/")
+                    .addHeader("Upgrade-Insecure-Requests", "1")
+                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36")
                     .build();
+            Response response = client.newCall(request).execute();
 
-            com.squareup.okhttp.Response response = client.newCall(request).execute();
             String resStr = response.body().string();
-            LOG.D(TAG, "resStr: " + resStr);
-            LOG.D(TAG, "code: " + response.code());
-            if (response.code() == 200) {
-                return new JSONObject(resStr);
-            } else {
-                return null;
+            List<String> listIps = Utils.regex(resStr,"(?<=Base64.decode\\(\\\")(.*?)(?=\\\"\\))");
+            List<String> listPort = Utils.regex(resStr,"(?<=<td style=\\\"\\\"><span class=\\\"fport\\\" style=\\'\\'>)(.*?)(?=</span></td>)");;
+            List<String> listType = Utils.regex(resStr,"(?<=</span></td><td><small>)(.*?)(?=</small></td>)");;
+            if(listIps.size() == listPort.size() &&
+                    listPort.size() == listType.size()) {
+                for (int i = 0; i < listIps.size(); i++ ) {
+                    String ip =  new String(java.util.Base64.getDecoder().decode(listIps.get(i)), "UTF-8");
+                    results.add(new ProxyInfo(ip, Integer.valueOf(listPort.get(i)), protocol, listType.get(i).toLowerCase(), ProxyInfo.STATUS_UNCHECK));
+                }
             }
         } catch (Exception e) {
-            LOG.E(TAG, "scanProxy error: " + e);
-            return null;
+            LOG.E(TAG, "scanProxyFromFreeProxyCz error: " + e);
         }
+        return results;
     }
+
+
 
     public static boolean checkProxyALive(ProxyInfo proxyInfo) {
         LOG.I(TAG, "checkProxyALive: " + proxyInfo);
@@ -341,7 +307,7 @@ public class ProxyHelper {
         }
 
         // Now do whatever it is you need to do.  All communications will go through the proxy.
-        String html = http.quickGetStr("https://api64.ipify.org/?format=text");
+        String html = http.quickGetStr("https://www.google.com");
         return html != null && http.get_LastMethodSuccess();
     }
 }

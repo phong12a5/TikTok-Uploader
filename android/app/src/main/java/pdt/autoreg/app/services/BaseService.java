@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pdt.autoreg.accessibility.ASInterface;
 import pdt.autoreg.accessibility.LOG;
@@ -173,9 +175,8 @@ public abstract class BaseService extends Service {
 
         if(AppModel.instance().currPackage() != null) {
             RootHelper.closePackage(AppModel.instance().currPackage().getPackageName());
-            if(!changeIp()) {
+            while (!changeIp()) {
                 LOG.E(TAG, "change ip failed!");
-                return;
             }
         }
 
@@ -374,15 +375,35 @@ public abstract class BaseService extends Service {
                 success = true;
                 break;
             case AppDefines.PROXY_NETWORK:
-                List<ProxyHelper.ProxyInfo> list = ProxyHelper.scanProxyFromFreeProxyList("US", new String[]{ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
-                Collections.shuffle(list);
-                for (ProxyHelper.ProxyInfo proxy : list) {
+                List<ProxyHelper.ProxyInfo> list1 = ProxyHelper.scanProxyFromFreeProxyList(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
+                List<ProxyHelper.ProxyInfo> list2 = ProxyHelper.scanProxyFromGeonode(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS, ProxyHelper.PROXY_PROTOCOL_SOCKS4, ProxyHelper.PROXY_PROTOCOL_SOCKS5});
+                List<ProxyHelper.ProxyInfo> list3 =  ProxyHelper.scanProxyFromFreeProxyCz("US", null);
+
+                List<ProxyHelper.ProxyInfo> list = list1;
+                list.addAll(list2);
+                list.addAll(list3);
+
+                while (!list.isEmpty()) {
+                    final ProxyHelper.ProxyInfo proxy = list.remove(new Random().nextInt(list.size()));
                     if(ProxyHelper.checkProxyALive(proxy)) {
-                        break;
+                        LOG.D(TAG, "proxy live: " + proxy);
+                        ProxyHelper.starProxySwitch(proxy);
+                        Utils.delay(3000);
+                        String output = RootHelper.execute("curl https://api.ipify.org?format=text && echo");
+                        LOG.D(TAG, "output: " + output);
+                        String IPADDRESS_PATTERN =
+                                "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+
+                        Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
+                        Matcher matcher = pattern.matcher(output);
+                        if (matcher.find())  {
+                            LOG.D(TAG,"ip: " + matcher.group(0));
+                            break;
+                        } else ProxyHelper.stopProxySwitch();
                     }
-                    ProxyHelper.starProxySwitch(proxy);
                 }
-                return false;
+                LOG.I(TAG, "DONE");
+                return !list.isEmpty();
             case AppDefines.SSHTUNNEL_NETWORK:
                 break;
         }
