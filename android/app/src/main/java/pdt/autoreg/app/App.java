@@ -73,39 +73,32 @@ public class App extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<ProxyHelper.ProxyInfo> list1 = ProxyHelper.scanProxyFromFreeProxyList(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
-                List<ProxyHelper.ProxyInfo> list2 = ProxyHelper.scanProxyFromGeonode(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS, ProxyHelper.PROXY_PROTOCOL_SOCKS4, ProxyHelper.PROXY_PROTOCOL_SOCKS5});
-                List<ProxyHelper.ProxyInfo> list3 =  ProxyHelper.scanProxyFromFreeProxyCz("US", null);
+//                ProxyHelper.checkSSHConnection("premiusa3.vpnjantit.com", 22, "US");
+                ProxyHelper.scanSsh();
+//                List<ProxyHelper.ProxyInfo> list1 = ProxyHelper.scanProxyFromFreeProxyList(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
+//                List<ProxyHelper.ProxyInfo> list2 = ProxyHelper.scanProxyFromGeonode(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS, ProxyHelper.PROXY_PROTOCOL_SOCKS4, ProxyHelper.PROXY_PROTOCOL_SOCKS5});
+//                List<ProxyHelper.ProxyInfo> list3 =  ProxyHelper.scanProxyFromFreeProxyCz("US", ProxyHelper.PROXY_PROTOCOL_SOCKS5);
 
-                List<ProxyHelper.ProxyInfo> list = list1;
-                list.addAll(list2);
-                list.addAll(list3);
+//                List<ProxyHelper.ProxyInfo> list = list3;
+//                list.addAll(list2);
+//                list.addAll(list3);
 
-                while (!list.isEmpty()) {
-                    final ProxyHelper.ProxyInfo proxy = list.remove(new Random().nextInt(list.size()));
-                    if(ProxyHelper.checkProxyALive(proxy)) {
-                        LOG.D(TAG, "proxy live: " + proxy);
-                        ProxyHelper.starProxySwitch(proxy);
-                        Utils.delay(3000);
-
-                        OkHttpClient client = new OkHttpClient();
-                        client.setConnectTimeout(2, TimeUnit.SECONDS); // connect timeout
-                        client.setReadTimeout(2, TimeUnit.SECONDS);    // socket timeout
-
-                        Request request = new Request.Builder().url("https://api.ipify.org?format=text").build();
-                        try {
-                            Response response = client.newCall(request).execute();
-                            if(response != null && response.code() == 200) {
-                                LOG.D(TAG,"ip: " + response.body().string());
-                                break;
-                            } else {
-                                LOG.D(TAG,"startProxy failed -> proxy: " + proxy);
-                            }
-                        } catch (IOException e) {
-                            LOG.E(TAG, "startProxy failed -> error: " + e.getMessage());
-                        }
-                    }
-                }
+//                while (!list.isEmpty()) {
+//                    final ProxyHelper.ProxyInfo proxy = list.remove(new Random().nextInt(list.size()));
+//                    if(ProxyHelper.checkProxyALive(proxy)) {
+//                        LOG.D(TAG, "proxy live: " + proxy);
+//                        ProxyHelper.starProxySwitch(proxy);
+//                        Utils.delay(3000);
+//
+//                        String doc = RootHelper.execute("curl --connect-timeout 3 --max-time 6 https://google.com");
+//                        LOG.D(TAG, "respone: " + doc);
+//                        if(doc != null) {
+//                            break;
+//                        } else {
+//                            ProxyHelper.stopProxySwitch();
+//                        }
+//                    }
+//                }
                 LOG.I(TAG, "DONE");
             }
         }).start();

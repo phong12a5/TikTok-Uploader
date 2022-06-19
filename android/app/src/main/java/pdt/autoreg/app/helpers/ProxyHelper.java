@@ -6,6 +6,8 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 
 import com.chilkatsoft.CkHttp;
+import com.chilkatsoft.CkSsh;
+import com.chilkatsoft.CkSshTunnel;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -18,10 +20,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pdt.autoreg.accessibility.LOG;
 import pdt.autoreg.app.App;
@@ -274,7 +281,7 @@ public class ProxyHelper {
                     listPort.size() == listType.size()) {
                 for (int i = 0; i < listIps.size(); i++ ) {
                     String ip =  new String(java.util.Base64.getDecoder().decode(listIps.get(i)), "UTF-8");
-                    results.add(new ProxyInfo(ip, Integer.valueOf(listPort.get(i)), protocol, listType.get(i).toLowerCase(), ProxyInfo.STATUS_UNCHECK));
+                    results.add(new ProxyInfo(ip, Integer.valueOf(listPort.get(i)), country, listType.get(i).toLowerCase(), ProxyInfo.STATUS_UNCHECK));
                 }
             }
         } catch (Exception e) {
@@ -287,27 +294,238 @@ public class ProxyHelper {
 
     public static boolean checkProxyALive(ProxyInfo proxyInfo) {
         LOG.I(TAG, "checkProxyALive: " + proxyInfo);
-        CkHttp http = new CkHttp();
-        http.put_ConnectTimeout(3);
-        http.put_ConnectTimeout(3);
+//        CkHttp http = new CkHttp();
+//        http.put_ConnectTimeout(3);
+//        http.put_ConnectTimeout(3);
+//
+//        if(PROXY_PROTOCOL_SOCKS5.equals(proxyInfo.type)) {
+//            http.put_SocksVersion(5);
+//            http.put_SocksUsername("myUsername");
+//            http.put_SocksPassword("myPassword");
+//            http.put_SocksHostname(proxyInfo.ip);
+//            http.put_SocksPort(proxyInfo.port);
+//        } else if(PROXY_PROTOCOL_SOCKS4.equals(proxyInfo.type))  {
+//            http.put_SocksVersion(4);
+//            http.put_SocksHostname(proxyInfo.ip);
+//            http.put_SocksPort(proxyInfo.port);
+//        } else {
+//            http.put_ProxyDomain(proxyInfo.ip);
+//            http.put_ProxyPort(proxyInfo.port);
+//        }
 
-        if(PROXY_PROTOCOL_SOCKS5.equals(proxyInfo.type)) {
-            http.put_SocksVersion(5);
-            http.put_SocksUsername("myUsername");
-            http.put_SocksPassword("myPassword");
-            http.put_SocksHostname(proxyInfo.ip);
-            http.put_SocksPort(proxyInfo.port);
-        } else if(PROXY_PROTOCOL_SOCKS4.equals(proxyInfo.type))  {
-            http.put_SocksVersion(4);
-            http.put_SocksHostname(proxyInfo.ip);
-            http.put_SocksPort(proxyInfo.port);
+        OkHttpClient client = new OkHttpClient();
+        if(PROXY_PROTOCOL_SOCKS5.equals(proxyInfo.type) ||
+                PROXY_PROTOCOL_SOCKS4.equals(proxyInfo.type)) {
+            client.setProxy(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyInfo.ip, proxyInfo.port)));
         } else {
-            http.put_ProxyDomain(proxyInfo.ip);
-            http.put_ProxyPort(proxyInfo.port);
+            client.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.ip, proxyInfo.port)));
         }
+        client.setConnectTimeout(3, TimeUnit.SECONDS); // connect timeout
+        client.setReadTimeout(3, TimeUnit.SECONDS);    // socket timeout
+
+        Request request = new Request.Builder().url("https://api.ipify.org?format=text").build();
+        try {
+            Response response = client.newCall(request).execute();
+            if(response != null && response.code() == 200) {
+                LOG.D(TAG,"ip: " + response.body().string());
+                return true;
+            } else {
+                LOG.D(TAG,"startProxy failed -> proxy: " + proxyInfo);
+            }
+        } catch (IOException e) {
+            LOG.E(TAG, "startProxy failed -> error: " + e.getMessage());
+        }
+        return false;
 
         // Now do whatever it is you need to do.  All communications will go through the proxy.
-        String html = http.quickGetStr("https://www.google.com");
-        return html != null && http.get_LastMethodSuccess();
+//        String html = http.quickGetStr("https://www.google.com");
+//        return html != null && http.get_LastMethodSuccess();
     }
+
+    public static void scanSsh() {
+        JSONArray m_listSSH;
+        try {
+            LOG.D(TAG, " ---------------------------- Re-scanning ssh server ---------------------------- ");
+            CkHttp http = new CkHttp();
+            String body = http.quickGetStr("https://ssh24h.com/APIv2?token=3d4fd16cf3b472cf91ea0ed9b813c805&code=ID");
+
+            JSONObject respObj = new JSONObject(body);
+            m_listSSH = respObj.getJSONArray("listSSH");
+
+            LOG.D(TAG, "listSSH: " + m_listSSH.length());
+
+
+            LOG.D(TAG, " ----------------------------- checking ----------------------------- ");
+            for (int i = 0; i < m_listSSH.length(); i++) {
+                try {
+                        String sshStr = m_listSSH.getString(i);
+                        String[] split = sshStr.split("\\|");
+                        String countryPart = split[3];
+                        Matcher m = Pattern.compile("\\((.*?)\\)").matcher(countryPart);
+                        String countryCode = null;
+                        while (m.find()) {
+                            countryCode = m.group(1);
+                        }
+
+                        String ip = split[0];
+                        String username = split[1];
+                        String password = split[2];
+                        String IPADDRESS_PATTERN =
+                                "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+
+                        Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
+                        Matcher matcher = pattern.matcher(ip);
+                        if (matcher.find()) {
+                            ip = matcher.group(0);
+                        }
+
+                        if(checkSSHConnection(ip, 22, countryCode) && dynamicForwardPort(ip, 22, username, password)) {
+                            starProxySwitch();
+                            Utils.delay(2000);
+                            String publicUp = Utils.getPuclicIP();
+                            if(publicUp != null) {
+                                Utils.showToastMessage(App.getContext(), "public ip: " + publicUp);
+                                LOG.I(TAG, "ngon");
+//                                break;
+                            }
+                        }
+
+                        closeTunnel();
+                        stopProxySwitch();
+                } catch (Exception e) {
+                    LOG.E(TAG, "scanSsh error: " + e);
+                }
+            }
+        } catch (Exception e) {
+            LOG.E(TAG, "scanSsh: " + e);
+        }
+    }
+
+    public static boolean checkSSHConnection(String ipAddress, int port, String countryCode) {
+        LOG.D(TAG, "checkSSHConnection ipAddress: " + ipAddress + " -- countryCode: " + countryCode);
+        CkSsh ssh = new CkSsh();
+        ssh.put_ConnectTimeoutMs(2000);
+        boolean connected = false;
+        if (ssh.Connect(ipAddress,port)) {
+
+            //  Am I connected?
+            connected = ssh.get_IsConnected();
+
+            //  Disconnect.
+            ssh.Disconnect();
+        }
+        LOG.D(TAG, "checkSSHConnection -- ipAddress: " + ipAddress + " -- connect: " + (connected?  "success" : "failed"));
+        return connected;
+    }
+
+    static CkSshTunnel sTunnel;
+    public static boolean dynamicForwardPort(String sshHostname, int sshPort, String userName, String password) {
+        LOG.D(TAG, "dynamicForwardPort -> sshHostname: " + sshHostname + " -- sshPort: " + sshPort + " -- userName: " + userName + " -- password: "  + password);
+        boolean success = false;
+
+        try {
+            if (sTunnel == null) {
+                sTunnel = new CkSshTunnel();
+            }
+
+            //  Connect to an SSH server and establish the SSH tunnel:
+            sTunnel.put_ConnectTimeoutMs(5000);
+            success = sTunnel.Connect(sshHostname, sshPort);
+            if (success != true) {
+                LOG.E(TAG, "Connect: " + sTunnel.lastErrorText());
+                return false;
+            }
+
+            //  Authenticate with the SSH server via a login/password
+            //  or with a public key.
+            //  This example demonstrates SSH password authentication.
+            success = sTunnel.AuthenticatePw(userName, password);
+            if (success != true) {
+                LOG.E(TAG, "AuthenticatePw: " + sTunnel.lastErrorText());
+                closeTunnel();
+                return false;
+            }
+
+            //  Indicate that the background SSH tunnel thread will behave as a SOCKS proxy server
+            //  with dynamic port forwarding:
+            sTunnel.put_DynamicPortForwarding(true);
+
+            //  We may optionally require that connecting clients authenticate with our SOCKS proxy server.
+            //  To do this, set an inbound username/password.  Any connecting clients would be required to
+            //  use SOCKS5 with the correct username/password.
+            //  If no inbound username/password is set, then our SOCKS proxy server will accept both
+            //  SOCKS4 and SOCKS5 unauthenticated connections.
+
+//        tunnel.put_InboundSocksUsername("chilkat123");
+//        tunnel.put_InboundSocksPassword("password123");
+
+            //  Start the listen/accept thread to begin accepting SOCKS proxy client connections.
+            //  Listen on port 1080.
+            success = sTunnel.BeginAccepting(1080);
+            if (success != true) {
+                LOG.E(TAG, "BeginAccepting: " + sTunnel.lastErrorText());
+                closeTunnel();
+                return false;
+            } else {
+                LOG.D(TAG, "Forword port successfully");
+                return true;
+            }
+        } catch (Exception e) {
+            LOG.E(TAG, "dynamicForwardPort error: " + e);
+            return false;
+        }
+    }
+
+    public static boolean closeTunnel() {
+        LOG.D(TAG,"closeTunnel");
+        try {
+            //  Stop the background listen/accept thread:
+            boolean waitForThreadExit = true;
+            if (sTunnel != null) {
+                boolean success = sTunnel.StopAccepting(waitForThreadExit);
+                if (success != true) {
+                    LOG.E(TAG, "StopAccepting: " + sTunnel.lastErrorText());
+                    return false;
+                }
+
+                Utils.delay(1000);
+                LOG.D(TAG, "get_IsAccepting: " + sTunnel.get_IsAccepting());
+
+                //  Close the SSH tunnel (would also kick any remaining connected clients).
+                sTunnel.DisconnectAllClients(waitForThreadExit);
+                while(!sTunnel.CloseTunnel(waitForThreadExit)) {
+                    LOG.E(TAG, "CloseTunnel: " + sTunnel.lastErrorText());
+                    Utils.delay(1000);
+                }
+
+                sTunnel.delete();
+                sTunnel = null;
+            }
+            return true;
+        } catch (Exception e) {
+            LOG.E(TAG, "closeTunnel error: " + e);
+            return false;
+        }
+    }
+
+    public static void starProxySwitch() {
+        LOG.D(TAG,"starProxySwitch");
+        String cmd1 = "chmod 700 /data/data/pdt.autoreg.app/redsocks";
+        String cmd2 = "chmod 700 /data/data/pdt.autoreg.app/proxy.sh";
+        String cmd4 = "chmod 700 /data/data/pdt.autoreg.app/cntlm";
+        String cmd6 = "chmod 700 /data/data/pdt.autoreg.app/gost";
+        String cmd7 = "/data/user/0/pdt.autoreg.app/files/proxy.sh /data/user/0/pdt.autoreg.app/files/ start socks5 127.0.0.1 1080 false \"\" \"\"";
+        String cmd8 = "/system/bin/iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 -j RETURN\n" +
+                "/system/bin/iptables -t nat -A OUTPUT -p tcp -j REDIRECT --to 8123";
+        String[] commands = {cmd1,cmd2,cmd4,cmd6,cmd7,cmd8};
+        RootHelper.execute(commands);
+    }
+
+//    public static void stopProxySwitch() {
+//        LOG.D(TAG,"stopProxySwitch");
+//        String cmd1 = "/system/bin/iptables -t nat -F OUTPUT";
+//        String cmd2 = "/data/data/pdt.autoreg.app/proxy.sh stop";
+//        String[] commands = {cmd1,cmd2};
+//        RootHelper.execute(commands);
+//    }
 }
