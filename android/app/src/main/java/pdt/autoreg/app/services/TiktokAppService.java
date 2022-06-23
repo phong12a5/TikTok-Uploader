@@ -174,7 +174,7 @@ public class TiktokAppService extends BaseService {
                         AppModel.instance().currPackage().setIsVerifiedLogin(true);
                         AppModel.instance().currPackage().getCloneInfo().setStatus(CloneInfo.CLONE_STATUS_STORED);
                         Utils.showToastMessage(this, "Verified login");
-                        while (!backupPackage()) {
+                        while (!backupPackage(AppModel.instance().currPackage().getCloneInfo().username(), AppModel.instance().currPackage().getPackageName())) {
                             Utils.showToastMessage(this, "Backup failed -> retry");
                             Utils.delay(1000);
                         }

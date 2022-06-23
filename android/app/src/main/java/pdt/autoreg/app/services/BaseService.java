@@ -4,8 +4,10 @@ import static pdt.autoreg.devicefaker.helper.FileHelper.readFile;
 
 import android.Manifest;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.IBinder;
@@ -53,6 +55,55 @@ public abstract class BaseService extends Service {
     protected int widthOfScreen = 0;
     protected int heightOfScreen = 0;
     protected List<String> m_screenStack = new ArrayList<String>();
+    BroadcastReceiver mGenerateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case "GENERATE_CLONE_INFO": {
+                    m_workerThread.stopWorker();
+                    String packageName = intent.getStringExtra("pacakge_name");
+                    RootHelper.clearPackage(packageName);
+                    generateNewDeviceInfo(packageName);
+                }
+                    break;
+                case "BACKUP_PACKAGE": {
+                    m_workerThread.stopWorker();
+                    String packageName = intent.getStringExtra("pacakge_name");
+                    String username = intent.getStringExtra("username");
+                    backupPackage(username, packageName);
+                }
+                    break;
+                case "USE_SSH_TUNNEL": {
+                    String hostname = intent.getStringExtra("hostname");
+                    final String username = intent.getStringExtra("username");
+                    final String password = intent.getStringExtra("password");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean success = false;
+                            if (ProxyHelper.checkSSHConnection(hostname, 22, "US") && ProxyHelper.dynamicForwardPort(hostname, 22, username, password)) {
+                                ProxyHelper.starProxySwitch();
+                                Utils.delay(5000);
+                                String publicUp = Utils.getPuclicIP();
+                                if (publicUp != null) {
+                                    Utils.showToastMessage(App.getContext(), "public ip: " + publicUp);
+                                    success = true;
+                                    LOG.I(TAG, "ngon");
+                                } else {
+                                    LOG.I(TAG, "failed");
+                                }
+                            }
+                            if(!success) {
+                                ProxyHelper.closeTunnel();
+                                ProxyHelper.stopProxySwitch();
+                            }
+                        }
+                    }).start();
+                }
+                    break;
+            }
+        }
+    };
 
     /* --------------------------------------- Abstract methods --------------------------------------- */
     protected abstract void mainOperations();
@@ -68,6 +119,13 @@ public abstract class BaseService extends Service {
         heightOfScreen = metrics.heightPixels;
 
         m_workerThread.startWorker();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("GENERATE_CLONE_INFO");
+        filter.addAction("BACKUP_PACKAGE");
+        filter.addAction("USE_SSH_TUNNEL");
+        registerReceiver(mGenerateReceiver, filter);
+
         LOG.D(TAG, "Created " + this.getClass().getName());
     }
 
@@ -77,6 +135,7 @@ public abstract class BaseService extends Service {
         AppModel.instance().setServiceStarted(false);
         m_workerThread.stopWorker();
         m_workerThread = null;
+        unregisterReceiver(mGenerateReceiver);
         LOG.D(TAG,"onDestroy");
     }
 
@@ -240,11 +299,9 @@ public abstract class BaseService extends Service {
         }
     }
 
-    protected boolean backupPackage() {
+    protected boolean backupPackage(String username, String packageName) {
         try {
-            String username = AppModel.instance().currPackage().getCloneInfo().username();
             String backupFolderPath = getBackupFolderPath(username);
-            String packageName = AppModel.instance().currPackage().getPackageName();
             if (FileHelper.exist(backupFolderPath)) {
                 LOG.I(TAG, "backup data existed already");
             } else {
@@ -262,7 +319,7 @@ public abstract class BaseService extends Service {
     }
 
     protected void generateNewDeviceInfo(String packageName) {
-        LOG.D(TAG, "generateNewDeviceInfo");
+        LOG.D(TAG, "generateNewDeviceInfo: " + packageName);
         try {
             InputStream stream = getAssets().open("devices.json");
             int size = stream.available();
@@ -351,10 +408,10 @@ public abstract class BaseService extends Service {
                 AppModel.instance().setCurrScrID(screenInfo.detected_screen_id);
                 AppModel.instance().setCurrtScrInfo(screenInfo.nodes_in_screen);
                 LOG.D(TAG, "screenInfo.detected_screen_id: " + screenInfo.detected_screen_id);
-                for(ScreenNode node : screenInfo.nodes_in_screen) LOG.I(TAG, node + "");
-                if (save2Stack) {
-                    m_screenStack.add(AppModel.instance().currScrID());
-                }
+//                for(ScreenNode node : screenInfo.nodes_in_screen) LOG.I(TAG, node + "");
+//                if (save2Stack) {
+//                    m_screenStack.add(AppModel.instance().currScrID());
+//                }
                 return true;
             }
         } catch (RemoteException e) {

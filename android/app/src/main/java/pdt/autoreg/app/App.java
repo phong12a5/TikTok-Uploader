@@ -60,8 +60,7 @@ public class App extends Application {
         unlockChilkat();
         initApplication(this);
         ProxyHelper.stopProxySwitch();
-//        ProxyHelper.starProxySwitch(new ProxyHelper.ProxyInfo("66.94.97.238", 443, "US", "http", 0));
-//        copyProxyTools(getContext());
+        copyProxyTools(getContext());
 
         volumeObserver = new VolumeObserver(handler);
         getContentResolver().registerContentObserver(
@@ -69,39 +68,6 @@ public class App extends Application {
                 true,
                 volumeObserver
         );
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-//                ProxyHelper.checkSSHConnection("premiusa3.vpnjantit.com", 22, "US");
-                ProxyHelper.scanSsh();
-//                List<ProxyHelper.ProxyInfo> list1 = ProxyHelper.scanProxyFromFreeProxyList(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS});
-//                List<ProxyHelper.ProxyInfo> list2 = ProxyHelper.scanProxyFromGeonode(new String[]{"US"}, new String[] { ProxyHelper.PROXY_PROTOCOL_HTTP, ProxyHelper.PROXY_PROTOCOL_HTTPS, ProxyHelper.PROXY_PROTOCOL_SOCKS4, ProxyHelper.PROXY_PROTOCOL_SOCKS5});
-//                List<ProxyHelper.ProxyInfo> list3 =  ProxyHelper.scanProxyFromFreeProxyCz("US", ProxyHelper.PROXY_PROTOCOL_SOCKS5);
-
-//                List<ProxyHelper.ProxyInfo> list = list3;
-//                list.addAll(list2);
-//                list.addAll(list3);
-
-//                while (!list.isEmpty()) {
-//                    final ProxyHelper.ProxyInfo proxy = list.remove(new Random().nextInt(list.size()));
-//                    if(ProxyHelper.checkProxyALive(proxy)) {
-//                        LOG.D(TAG, "proxy live: " + proxy);
-//                        ProxyHelper.starProxySwitch(proxy);
-//                        Utils.delay(3000);
-//
-//                        String doc = RootHelper.execute("curl --connect-timeout 3 --max-time 6 https://google.com");
-//                        LOG.D(TAG, "respone: " + doc);
-//                        if(doc != null) {
-//                            break;
-//                        } else {
-//                            ProxyHelper.stopProxySwitch();
-//                        }
-//                    }
-//                }
-                LOG.I(TAG, "DONE");
-            }
-        }).start();
     }
 
     @Override

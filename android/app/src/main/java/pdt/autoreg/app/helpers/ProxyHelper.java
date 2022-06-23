@@ -347,7 +347,7 @@ public class ProxyHelper {
         try {
             LOG.D(TAG, " ---------------------------- Re-scanning ssh server ---------------------------- ");
             CkHttp http = new CkHttp();
-            String body = http.quickGetStr("https://ssh24h.com/APIv2?token=3d4fd16cf3b472cf91ea0ed9b813c805&code=ID");
+            String body = http.quickGetStr("https://ssh24h.com/APIv2?token=3d4fd16cf3b472cf91ea0ed9b813c805&code=US");
 
             JSONObject respObj = new JSONObject(body);
             m_listSSH = respObj.getJSONArray("listSSH");
@@ -386,7 +386,7 @@ public class ProxyHelper {
                             if(publicUp != null) {
                                 Utils.showToastMessage(App.getContext(), "public ip: " + publicUp);
                                 LOG.I(TAG, "ngon");
-//                                break;
+                                break;
                             }
                         }
 

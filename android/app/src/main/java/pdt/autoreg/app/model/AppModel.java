@@ -32,12 +32,6 @@ public class AppModel {
 
     private AppModel() {
         m_prefs = App.getContext().getSharedPreferences(AppDefines.PDT_PREFS_NAME, MODE_PRIVATE);
-
-//        int currentPackageId = m_prefs.getInt("curr_package_id", -1);
-//        if(currentPackageId >= 0) {
-//            LOG.I(TAG, "Loaded current packaged id: " + currentPackageId);
-//            setCurrPackage(new PackageInfo(currentPackageId, Constants.REG_PACKAGE));
-//        }
         LOG.D(TAG, "Created Model");
     }
 
@@ -65,7 +59,7 @@ public class AppModel {
     }
 
     public int networkType() {
-        return m_prefs.getInt("netwok_type", AppDefines.PROXY_NETWORK);
+        return m_prefs.getInt("netwok_type", AppDefines.MOBILE_NETWORK);
     }
 
     public void setNetworkType(int data) {
